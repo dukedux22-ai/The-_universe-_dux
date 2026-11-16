@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="msvalidate.01" content="C3ABFACCE1C1567565B7570554017806" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#4f46e5">
+<meta name="description" content="ZYNOVA Calculator - offline educational calculator and learning assistant">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ZYNOVA Calculator & AI</title>
+
+<!-- Calculator-style favicon -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='8' width='80' height='84' rx='12' fill='%234f46e5'/%3E%3Crect x='20' y='18' width='60' height='20' rx='4' fill='white'/%3E%3Cg fill='white'%3E%3Crect x='20' y='46' width='14' height='12' rx='2'/%3E%3Crect x='43' y='46' width='14' height='12' rx='2'/%3E%3Crect x='66' y='46' width='14' height='12' rx='2'/%3E%3Crect x='20' y='64' width='14' height='12' rx='2'/%3E%3Crect x='43' y='64' width='14' height='12' rx='2'/%3E%3Crect x='66' y='64' width='14' height='12' rx='2'/%3E%3C/g%3E%3C/svg%3E">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+:root{
+ --bg:#eef2ff;--card:#fff;--text:#111827;--muted:#64748b;
+ --primary:#4f46e5;--primary2:#7c3aed;--border:#dbe3f0;
+ --input:#f8fafc;--danger:#dc2626;--success:#16a34a;
+ --warning:#d97706;--shadow:0 10px 30px rgba(15,23,42,.10)
+}
+body.dark{
+ --bg:#0b1020;--card:#151c2f;--text:#f8fafc;--muted:#a5b4fc;
+ --primary:#818cf8;--primary2:#a78bfa;--border:#293449;
+ --input:#0f172a;--shadow:0 10px 30px rgba(0,0,0,.35)
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;transition:.2s}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.nav{max-width:1450px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:15px}
+.logo{display:flex;align-items:center;gap:9px;font-size:23px;font-weight:900;white-space:nowrap}
+.logo span{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:8px 10px;border-radius:12px}
+nav{display:flex;flex-wrap:wrap;gap:4px;flex:1}
+nav button{border:0;background:transparent;color:var(--text);padding:9px 10px;border-radius:9px;font-weight:bold}
+nav button:hover,nav button.active{background:var(--primary);color:#fff}
+main{max-width:1450px;margin:auto;padding:20px}
+.section{display:none}.section.active{display:block}
+.hero{padding:30px;border-radius:25px;color:#fff;background:linear-gradient(135deg,#312e81,#4f46e5,#7c3aed);box-shadow:var(--shadow);margin-bottom:20px}
+.hero h1{font-size:clamp(30px,5vw,52px);margin-bottom:9px}.hero p{font-size:17px;opacity:.94;max-width:900px;line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.card h2,.card h3{margin-bottom:8px}.muted{color:var(--muted);line-height:1.5}
+.primary,.secondary,.danger,.success{border:0;padding:11px 15px;border-radius:11px;font-weight:bold}
+.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.secondary{background:var(--input);color:var(--text);border:1px solid var(--border)}
+.danger{background:var(--danger);color:#fff}.success{background:var(--success);color:#fff}
+.spacer{height:12px}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.small{font-size:13px}.center{text-align:center}
+
+/* HOME */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.feature-card{min-height:180px}
+.feature-icon{font-size:40px;margin-bottom:10px}
+
+/* MODALS / PANELS */
+.modal{position:fixed;inset:0;background:rgba(2,6,23,.65);display:none;align-items:center;justify-content:center;padding:18px;z-index:300}
+.modal.show{display:flex}.modal-box{background:var(--card);color:var(--text);width:min(850px,100%);max-height:90vh;overflow:auto;border-radius:22px;padding:24px;box-shadow:0 25px 70px rgba(0,0,0,.3)}
+.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:15px}
+.close{border:0;background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:8px 11px}
+.list{padding-left:20px;line-height:1.8}.topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:15px}
+.topic-btn{padding:13px;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:12px;text-align:left}
+.topic-btn:hover{border-color:var(--primary);background:rgba(79,70,229,.1)}
+
+/* CALCULATOR */
+.calculator{max-width:720px;margin:auto}.display{background:#020617;color:#fff;border-radius:18px;padding:18px;min-height:125px;margin-bottom:12px;text-align:right;overflow:auto}
+.expression{color:#94a3b8;min-height:25px;word-break:break-all}.answer{font-size:36px;font-weight:bold;margin-top:8px;word-break:break-all}
+.calc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.calc-grid button{min-height:50px;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:11px;font-weight:bold}
+.calc-grid button:hover{background:var(--primary);color:#fff}.calc-grid .equals{background:var(--primary);color:#fff}
+.memory-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:8px}.memory-bar button{padding:9px;border:1px solid var(--border);background:var(--input);color:var(--text);border-radius:9px}
+.history{margin-top:15px;max-height:240px;overflow:auto}.history-item{padding:9px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
+
+/* AI */
+.ai-shell{max-width:1050px;margin:auto}.ai-header{background:linear-gradient(135deg,#111827,#312e81);color:#fff;padding:22px;border-radius:22px 22px 0 0}
+.chat{background:var(--card);border:1px solid var(--border);height:550px;overflow-y:auto;padding:18px}
+.message{display:flex;margin:12px 0}.message.user{justify-content:flex-end}.bubble{max-width:84%;padding:13px 16px;border-radius:17px;line-height:1.55;white-space:pre-wrap}
+.message.ai .bubble{background:var(--input);border:1px solid var(--border)}.message.user .bubble{background:var(--primary);color:#fff}
+.ai-input{display:flex;gap:8px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:0 0 22px 22px}
+.ai-input textarea{flex:1;min-height:50px;max-height:150px;resize:vertical;background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px}
+.quick-ai{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.quick-ai button{border:1px solid var(--border);background:var(--input);color:var(--text);padding:7px 10px;border-radius:20px}
+
+/* SUBJECTS */
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px}.subject{cursor:pointer;transition:.18s}.subject:hover{transform:translateY(-4px);border-color:var(--primary)}
+.subject-icon{font-size:35px;margin-bottom:8px}
+
+/* QUICK */
+.concepts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.concept{border:1px solid var(--border);background:var(--card);padding:16px;border-radius:16px;cursor:pointer}.concept:hover{border-color:var(--primary);transform:translateY(-2px)}
+
+/* GAMES */
+.game-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.game-tabs button{border:1px solid var(--border);background:var(--input);color:var(--text);padding:10px 13px;border-radius:10px}.game-tabs button.active{background:var(--primary);color:#fff}
+.quiz-options{display:grid;gap:10px;margin-top:15px}.quiz-options button{padding:13px;text-align:left;border:1px solid var(--border);background:var(--input);color:var(--text);border-radius:12px}.quiz-options button:hover{background:var(--primary);color:#fff}
+.quiz-progress{height:9px;background:var(--input);border-radius:10px;overflow:hidden;margin:10px 0}.quiz-progress span{display:block;height:100%;background:var(--primary);width:0}
+.stat-number{font-size:32px;font-weight:900;color:var(--primary)}.achievement{border:1px solid var(--border);border-radius:14px;padding:14px;background:var(--input)}.achievement.locked{opacity:.5}
+
+/* CONVERTER */
+.converter{display:grid;grid-template-columns:1fr 1fr;gap:12px}.converter input,.converter select,.settings input,.settings select{width:100%;padding:12px;background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:10px}
+label{display:block;font-weight:bold;margin-bottom:6px}footer{text-align:center;padding:30px;color:var(--muted)}
+.notice{padding:12px;border-radius:12px;background:rgba(79,70,229,.1);border:1px solid var(--border);margin:10px 0;line-height:1.5}
+.toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;display:none;z-index:500;box-shadow:var(--shadow)}.toast.show{display:block}
+
+/* MOBILE */
+@media(max-width:850px){nav{display:none}.nav{justify-content:space-between}.calc-grid{grid-template-columns:repeat(4,1fr)}.memory-bar{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:600px){main{padding:12px}.hero{padding:20px}.converter{grid-template-columns:1fr}.bubble{max-width:92%}.ai-input{flex-direction:column}.ai-input button{width:100%}.memory-bar button{font-size:12px;padding:8px 3px}}
+
+
+
+/* =========================================================
+   ZYNOVA ACCOUNT / ONBOARDING / PLANS UPGRADE
+========================================================= */
+.onboarding{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,6,23,.78);backdrop-filter:blur(10px)}
+.onboarding.show{display:flex}
+.onboard-box{width:min(720px,100%);max-height:92vh;overflow:auto;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,.35);padding:28px}
+.splash-step{text-align:center;padding:38px 10px}
+.splash-logo{width:92px;height:92px;margin:0 auto 18px;border-radius:25px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:48px;box-shadow:var(--shadow)}
+.splash-title{font-size:clamp(36px,8vw,64px);font-weight:1000;letter-spacing:-2px}
+.loading-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden;max-width:360px;margin:22px auto 0}
+.loading-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));animation:zynovaLoad 1.6s ease forwards}
+@keyframes zynovaLoad{to{width:100%}}
+.onboard-center{text-align:center}.onboard-center h1{font-size:clamp(28px,6vw,46px);margin-bottom:10px}.onboard-center p{color:var(--muted);line-height:1.6}
+.onboard-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:22px 0}
+.onboard-feature{padding:16px;border:1px solid var(--border);border-radius:17px;background:var(--input);text-align:left}.onboard-feature b{display:block;margin-bottom:4px}
+.onboard-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.onboard-form{display:grid;gap:12px;margin-top:20px}.onboard-form label{font-weight:700}.onboard-form input{width:100%;padding:13px;border:1px solid var(--border);border-radius:12px;background:var(--input);color:var(--text);outline:none}.onboard-form input:focus{border-color:var(--primary)}
+.form-error{color:var(--danger);min-height:20px;font-weight:700}.form-note{font-size:13px;color:var(--muted);line-height:1.5}
+.trial-box{padding:22px;border-radius:20px;background:linear-gradient(135deg,#312e81,#4f46e5,#7c3aed);color:#fff;margin:20px 0}.trial-box h2{font-size:30px;margin-bottom:8px}.trial-box ul{padding-left:22px;line-height:1.8;margin-top:12px}
+.interest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}.interest-chip{padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--input);color:var(--text);cursor:pointer;font-weight:700;text-align:left}.interest-chip.selected{border-color:var(--primary);background:rgba(79,70,229,.13);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+.plan-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:99px;font-size:12px;font-weight:900;background:var(--input);border:1px solid var(--border);color:var(--text)}
+.trial-count{font-variant-numeric:tabular-nums;font-weight:900}.locked{position:relative}.locked::after{content:"⭐ Premium";position:absolute;right:12px;top:12px;padding:5px 8px;border-radius:99px;background:var(--primary);color:#fff;font-size:11px;font-weight:900}
+.account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.profile-big{font-size:42px}.plan-card{border:1px solid var(--border);border-radius:18px;padding:18px;background:var(--input)}.plan-card.featured{border-color:var(--primary);box-shadow:0 0 0 2px rgba(79,70,229,.12)}.plan-price{font-size:30px;font-weight:1000;margin:8px 0}.plan-card ul{padding-left:20px;line-height:1.8;color:var(--muted)}
+.plan-modal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:15px}.plan-modal-grid .plan-card button{width:100%;margin-top:12px}.plan-pill{cursor:pointer}
+.top-account{display:flex;align-items:center;gap:8px}.account-name{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+@media(max-width:600px){.onboard-box{padding:20px;border-radius:22px}.top-account .account-name{display:none}}
+
+
+/* PREMIUM / PRO CALCULATOR TOOLS */
+.calc-tools{max-width:720px;margin:0 auto 18px}.calc-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.calc-tool{background:var(--input);border:1px solid var(--border);border-radius:16px;padding:15px}.calc-tool h3{margin-bottom:5px}.calc-tool button{width:100%;margin-top:10px}.calc-tool.pro{border-color:#7c3aed}.calc-tool.premium{border-color:#4f46e5}.tool-badge{display:inline-block;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:900;background:var(--primary);color:#fff;margin-bottom:8px}.tool-badge.pro{background:#7c3aed}.tool-output{margin-top:12px;white-space:pre-wrap;line-height:1.55;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;min-height:45px}.tool-inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:10px}.tool-inputs input,.tool-inputs textarea{width:100%;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:9px}.tool-lock{opacity:.72}.tool-lock button{cursor:pointer}
+</style>
+</head>
+
+<body>
+<header>
+<div class="nav">
+<div class="logo"><span>🧮</span>ZYNOVA</div>
+<nav id="mainNav">
+<button class="active" data-section="home">🏠 Home</button>
+<button data-section="calculator">🧮 Calculator</button>
+<button data-section="quick">⚡ Quick Solve</button>
+<button data-section="subjects">📚 Subjects</button>
+<button data-section="games">🎮 Games</button>
+<button data-section="stats">📊 Statistics</button>
+<button data-section="converter">📏 Converter</button>
+<button data-section="settings">⚙️ Settings</button>
+<button data-section="help">❓ Help</button>
+<button data-section="account">👤 Account</button>
+</nav>
+<div class="top-account"><span class="account-name" id="topAccountName" title="Your ZYNOVA name">Guest</span><span class="plan-pill" id="planPill">Free</span><button class="secondary" id="themeBtn" title="Toggle dark/light mode">🌙</button></div>
+</div>
+</header>
+
+<main>
+
+<section id="account" class="section">
+<div class="hero">
+<h1>👤 My ZYNOVA Account</h1>
+<p>Manage your profile, learning interests and ZYNOVA plan.</p>
+</div>
+<div class="account-grid">
+<div class="card">
+<div class="profile-big">👤</div>
+<h2 id="accountDisplayName">Guest</h2>
+<p id="accountDisplayEmail" class="muted">No account signed in.</p>
+<p id="accountInterests" class="muted" style="margin-top:10px"></p>
+<br><button class="secondary" id="signOutBtn">🚪 Sign Out</button>
+</div>
+<div class="card">
+<h2>⭐ Your Plan</h2>
+<p id="accountPlanText" class="muted" style="margin-top:8px"></p>
+<div id="accountTrialText" class="notice" style="margin-top:14px"></div>
+<br><button class="primary" id="plansBtn">⭐ View Premium & Pro</button>
+</div>
+</div>
+<br>
+<div class="card">
+<h2>🎯 Learning Interests</h2>
+<p class="muted">Your choices personalize the Home screen. They do not remove any subject.</p>
+<div id="accountInterestGrid" class="interest-grid"></div>
+<button class="primary" id="saveInterestsBtn">Save Interests</button>
+</div>
+</section>
+
+<section id="home" class="section active">
+<div class="hero">
+<h1 id="homeGreeting">Welcome to ZYNOVA ⚡</h1>
+<div id="homePlanStatus" class="plan-pill" style="margin:8px 0 14px;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.25);color:#fff">Free</div>
+<p>Your offline educational calculator, learning system and AI tutor. Everything works locally in your browser, including the calculator, quizzes, statistics, converter, settings, backup and the built-in educational knowledge engine.</p>
+</div>
+<div class="feature-grid">
+<div class="card feature-card"><div class="feature-icon">🤖</div><h3>ZYNOVA AI</h3><p class="muted">Ask educational questions naturally. The offline engine searches concepts, solves supported calculations and explains topics.</p><div class="spacer"></div><button class="primary open-section" data-target="ai">Open ZYNOVA AI</button></div>
+<div class="card feature-card"><div class="feature-icon">🧮</div><h3>Scientific Calculator</h3><p class="muted">Arithmetic, powers, roots, trigonometry, logarithms, percentages, constants, memory and calculation history.</p><div class="spacer"></div><button class="primary open-section" data-target="calculator">Open Calculator</button></div>
+<div class="card feature-card"><div class="feature-icon">⚡</div><h3>Quick Solve</h3><p class="muted">Tap a concept and ZYNOVA will open an explanation inside the AI tutor.</p><div class="spacer"></div><button class="primary open-section" data-target="quick">Explore Concepts</button></div>
+<div class="card feature-card"><div class="feature-icon">🎮</div><h3>Daily Challenge</h3><p id="dailyChallengeText" class="muted"></p><div class="spacer"></div><button class="primary" id="dailyBtn">Start Challenge</button></div>
+<div class="card feature-card"><div class="feature-icon">🏆</div><h3>Achievements</h3><p class="muted">Earn achievements from questions, calculations and quiz progress.</p><div class="spacer"></div><strong id="achievementCount">0 achievements</strong></div>
+<div class="card feature-card"><div class="feature-icon">ℹ️</div><h3>Information</h3><p class="muted">See what ZYNOVA contains, how offline mode works and the current version.</p><div class="spacer"></div><button class="secondary" id="aboutBtn">About ZYNOVA</button></div>
+</div>
+</section>
+
+<section id="ai" class="section">
+<div class="ai-shell">
+<div class="ai-header"><h2>🤖 ZYNOVA AI</h2><p>Offline Educational Intelligence Engine</p></div>
+<div id="chat" class="chat">
+<div class="message ai"><div class="bubble">Hello! 👋 I'm ZYNOVA AI.
+
+Ask me an educational question. You can ask for definitions, explanations, examples, comparisons, formulas, calculations and simple step-by-step help.
+
+Try:
+• What is velocity?
+• Solve 2x + 5 = 15
+• Explain photosynthesis
+• What is the area of a circle?
+• Define democracy
+• What is a computer?
+• Explain Hooke's law
+• I don't understand trigonometry
+
+Tip: If I do not recognize a topic, include the subject and exact topic so the offline engine has more context.</div></div>
+</div>
+<div class="ai-input">
+<textarea id="aiInput" placeholder="Ask ZYNOVA anything educational..." aria-label="AI question"></textarea>
+<button class="primary" id="sendAiBtn">Send</button>
+</div>
+<div class="quick-ai">
+<button data-ai="Explain acceleration simply">Acceleration</button>
+<button data-ai="What is photosynthesis?">Photosynthesis</button>
+<button data-ai="Solve 2x + 5 = 15">Solve equation</button>
+<button data-ai="Explain Hooke law">Hooke's law</button>
+<button data-ai="What is probability?">Probability</button>
+<button data-ai="What can you do?">What can you do?</button>
+</div>
+</div>
+</section>
+
+<section id="calculator" class="section">
+
+<div id="zynovaCalcPlanPanel" class="card" style="margin:0 0 18px;padding:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div>
+      <strong>🧮 Calculator Access</strong>
+      <div id="zynovaCalcPlanStatus" class="muted" style="margin-top:4px;">
+        Checking your ZYNOVA plan...
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="secondary" type="button" onclick="openPlansModal()">⭐ Premium</button>
+      <button class="primary" type="button" onclick="openPlansModal()">👑 Pro</button>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+    <div class="notice" style="margin:0;">
+      <strong>⭐ Premium</strong><br>
+      <span class="muted">AI • 16 Subjects • Quick Solve • Converter</span>
+    </div>
+    <div class="notice" style="margin:0;">
+      <strong>👑 Pro</strong><br>
+      <span class="muted">Everything in Premium + advanced tools</span>
+    </div>
+  </div>
+</div>
+
+<div class="calc-tools" id="calculatorTools">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div><h2>🚀 Advanced Calculator Tools</h2><p class="muted">Your plan determines which advanced tools are available.</p></div>
+      <span class="plan-pill" id="calcToolsPlan">Free</span>
+    </div>
+    <div class="calc-tools-grid" style="margin-top:14px">
+      <div class="calc-tool premium"><span class="tool-badge">⭐ PREMIUM</span><h3>➗ Fraction Simplifier</h3><p class="muted small">Reduce a fraction to its simplest form.</p><div class="tool-inputs"><input id="fracNum" type="number" placeholder="Numerator"><input id="fracDen" type="number" placeholder="Denominator"></div><button class="primary" type="button" onclick="runCalcTool('fraction')">Simplify</button></div>
+      <div class="calc-tool premium"><span class="tool-badge">⭐ PREMIUM</span><h3>📈 Percentage Tools</h3><p class="muted small">Find what percentage one number is of another.</p><div class="tool-inputs"><input id="pctA" type="number" placeholder="Part"><input id="pctB" type="number" placeholder="Whole"></div><button class="primary" type="button" onclick="runCalcTool('percentage')">Calculate %</button></div>
+      <div class="calc-tool premium"><span class="tool-badge">⭐ PREMIUM</span><h3>🔢 Prime Factorization</h3><p class="muted small">Break a whole number into prime factors.</p><div class="tool-inputs"><input id="primeN" type="number" min="2" step="1" placeholder="Whole number"></div><button class="primary" type="button" onclick="runCalcTool('prime')">Factorize</button></div>
+      <div class="calc-tool premium"><span class="tool-badge">⭐ PREMIUM</span><h3>🔗 GCD / LCM</h3><p class="muted small">Find the greatest common divisor and least common multiple.</p><div class="tool-inputs"><input id="gcdA" type="number" placeholder="Number A"><input id="gcdB" type="number" placeholder="Number B"></div><button class="primary" type="button" onclick="runCalcTool('gcd')">Solve</button></div>
+      <div class="calc-tool pro"><span class="tool-badge pro">👑 PRO</span><h3>🧠 Equation Solver</h3><p class="muted small">Solve linear or quadratic equations and show the working.</p><div class="tool-inputs"><input id="eqA" type="number" placeholder="a"><input id="eqB" type="number" placeholder="b"><input id="eqC" type="number" placeholder="c"></div><p class="small muted" style="margin-top:7px">Linear: bx + c = 0 | Quadratic: ax² + bx + c = 0</p><button class="primary" type="button" onclick="runCalcTool('equation')">Solve Equation</button></div>
+      <div class="calc-tool pro"><span class="tool-badge pro">👑 PRO</span><h3>📊 Statistics Analyzer</h3><p class="muted small">Enter numbers separated by commas.</p><div class="tool-inputs"><textarea id="statsData" rows="2" placeholder="12, 15, 18, 20, 25"></textarea></div><button class="primary" type="button" onclick="runCalcTool('statistics')">Analyze</button></div>
+      <div class="calc-tool pro"><span class="tool-badge pro">👑 PRO</span><h3>🧮 2×2 Matrix Solver</h3><p class="muted small">Calculate determinant and inverse when it exists.</p><div class="tool-inputs"><input id="m11" type="number" placeholder="a"><input id="m12" type="number" placeholder="b"><input id="m21" type="number" placeholder="c"><input id="m22" type="number" placeholder="d"></div><button class="primary" type="button" onclick="runCalcTool('matrix')">Solve Matrix</button></div>
+    </div>
+    <div id="calcToolOutput" class="tool-output" style="display:none"></div>
+  </div>
+</div>
+
+<div class="card calculator">
+<h2>🧮 Scientific Calculator</h2><p class="muted">Use the buttons or your keyboard. Trigonometric functions use degrees.</p><div class="spacer"></div>
+<div class="display"><div id="calcExpression" class="expression"></div><div id="calcAnswer" class="answer">0</div></div>
+<div class="memory-bar">
+<button id="mc">MC</button><button id="mr">MR</button><button id="mplus">M+</button><button id="mminus">M−</button><button id="ms">MS</button>
+</div>
+<div class="calc-grid">
+<button data-calc="7">7</button><button data-calc="8">8</button><button data-calc="9">9</button><button data-calc="/">÷</button><button data-action="clear">C</button><button data-action="back">⌫</button>
+<button data-calc="4">4</button><button data-calc="5">5</button><button data-calc="6">6</button><button data-calc="*">×</button><button data-calc="(">(</button><button data-calc=")">)</button>
+<button data-calc="1">1</button><button data-calc="2">2</button><button data-calc="3">3</button><button data-calc="-">−</button><button data-calc=".">.</button><button data-action="equals" class="equals">=</button>
+<button data-calc="0">0</button><button data-calc="00">00</button><button data-calc="+">+</button><button data-calc="**">xʸ</button><button data-calc="Math.PI">π</button><button data-calc="Math.E">e</button>
+<button data-fn="sqrt">√</button><button data-fn="sin">sin</button><button data-fn="cos">cos</button><button data-fn="tan">tan</button><button data-fn="asin">sin⁻¹</button><button data-fn="acos">cos⁻¹</button>
+<button data-fn="atan">tan⁻¹</button><button data-fn="log">log</button><button data-fn="ln">ln</button><button data-fn="square">x²</button><button data-fn="cube">x³</button><button data-fn="percent">%</button>
+<button data-fn="factorial">n!</button><button data-fn="reciprocal">1/x</button><button data-fn="abs">|x|</button><button data-fn="negate">±</button><button data-calc="10**">10ˣ</button><button data-fn="exp">eˣ</button>
+</div>
+<h3 style="margin-top:20px">📜 History</h3><div id="history" class="history"></div>
+<button class="danger" style="margin-top:10px" id="clearHistory">🗑️ Clear History</button>
+</div>
+</section>
+
+<section id="quick" class="section">
+<div class="hero"><h1>⚡ Quick Solve</h1><p>Tap any concept. It opens the AI tutor with the concept already loaded.</p></div>
+<div id="conceptGrid" class="concepts"></div>
+</section>
+
+<section id="subjects" class="section">
+<div class="hero"><h1>📚 16 Subjects</h1><p>Tap a subject to see its learning areas. Choosing a topic opens the AI tutor.</p></div>
+<div id="subjectGrid" class="subject-grid"></div>
+</section>
+
+<section id="games" class="section">
+<div class="hero"><h1>🎮 Educational Games</h1><p>Quizzes open and run directly inside this page.</p></div>
+<div class="game-tabs" id="gameTabs"></div>
+<div class="card">
+<div class="row" style="justify-content:space-between"><strong id="quizCategory">Mixed Quiz</strong><span id="quizScoreLabel">Score: 0</span></div>
+<div class="quiz-progress"><span id="quizProgress"></span></div>
+<h2 id="quizQuestion">Press Start Quiz</h2>
+<div id="quizOptions" class="quiz-options"></div>
+<p id="quizFeedback" style="margin-top:15px;min-height:24px"></p>
+<div class="spacer"></div><div class="row"><button class="primary" id="startQuiz">▶ Start Quiz</button><button class="secondary" id="nextQuiz">Next Question</button></div>
+</div>
+</section>
+
+<section id="stats" class="section">
+<div class="hero"><h1>📊 Statistics</h1><p>Track your ZYNOVA learning activity.</p></div>
+<div class="cards">
+<div class="card"><h3>Questions Asked</h3><div id="statQuestions" class="stat-number">0</div></div>
+<div class="card"><h3>Correct Answers</h3><div id="statScore" class="stat-number">0</div></div>
+<div class="card"><h3>Calculations</h3><div id="statCalculations" class="stat-number">0</div></div>
+<div class="card"><h3>AI Questions</h3><div id="statAI" class="stat-number">0</div></div>
+<div class="card"><h3>Quiz Questions</h3><div id="statQuizQuestions" class="stat-number">0</div></div>
+</div>
+<div class="spacer"></div>
+<div class="card"><h2>🏆 Achievements</h2><div class="spacer"></div><div id="achievements" class="cards"></div></div>
+<div class="spacer"></div>
+<div class="card"><h2>💾 Backup & Restore</h2><p class="muted">Export your ZYNOVA data to a JSON file or restore a previous backup.</p><div class="spacer"></div>
+<div class="row"><button class="primary" id="backupBtn">Backup Data</button><button class="secondary" id="restoreBtn">Restore Data</button><input type="file" id="restoreFile" accept=".json" hidden></div></div>
+</section>
+
+<section id="converter" class="section">
+<div class="hero"><h1>📏 Unit Converter</h1><p>Convert length, mass, time, area, volume, speed and temperature.</p></div>
+<div class="card">
+<div class="converter">
+<div><label>Value</label><input id="convertValue" type="number" value="1"></div>
+<div><label>Category</label><select id="convertCategory"></select></div>
+<div><label>From</label><select id="convertFrom"></select></div>
+<div><label>To</label><select id="convertTo"></select></div>
+</div><div class="spacer"></div><button class="primary" id="convertBtn">Convert</button>
+<h2 id="convertResult" style="margin-top:20px">Result</h2>
+</div>
+</section>
+
+<section id="settings" class="section">
+<div class="hero"><h1>⚙️ Settings</h1><p>Customize ZYNOVA without removing any of its features.</p></div>
+<div class="card settings">
+<h2>Appearance</h2><div class="spacer"></div>
+<div class="row"><button class="primary" id="lightMode">☀️ Light Mode</button><button class="secondary" id="darkMode">🌙 Dark Mode</button></div>
+<div class="spacer"></div><h2>Calculator</h2><p class="muted">Choose whether answers should use a compact display for very large numbers.</p><div class="spacer"></div>
+<label><input type="checkbox" id="compactNumbers"> Compact large numbers</label>
+<div class="spacer"></div><h2>AI</h2><p class="muted">The AI is offline and uses the knowledge included in this file. It does not have internet access or an external API.</p>
+<div class="spacer"></div><button class="danger" id="resetBtn">Reset ZYNOVA Data</button>
+</div>
+</section>
+
+<section id="help" class="section">
+<div class="hero"><h1>❓ Help & Information</h1><p>Everything you need to use ZYNOVA.</p></div>
+<div class="cards">
+<div class="card"><h2>🧮 Calculator Help</h2><p class="muted">Tap numbers and operators, then press =. Use sin, cos and tan in degrees. Memory buttons save a calculator value. History is stored locally.</p></div>
+<div class="card"><h2>🤖 AI Help</h2><p class="muted">Ask complete questions such as “Explain momentum”, “Define a noun”, “Calculate 25% of 200”, or “Solve 3x + 4 = 19”. The offline engine recognizes many educational patterns.</p></div>
+<div class="card"><h2>🎮 Games Help</h2><p class="muted">Choose a quiz category, start the quiz, select an answer and use Next Question. Correct answers increase your statistics and achievements.</p></div>
+<div class="card"><h2>💾 Backup Help</h2><p class="muted">Backup creates a JSON file containing local ZYNOVA progress. Restore loads that file back into the app.</p></div>
+<div class="card"><h2>📱 PWA / Offline</h2><p class="muted">The page is designed to work as a responsive web app. For full installable PWA caching, host the HTML from a web server or localhost; browsers normally restrict service workers on file:// pages.</p></div>
+<div class="card"><h2>ℹ️ About</h2><p class="muted">ZYNOVA is an educational calculator and offline learning project. Version: <strong>ZYNOVA 2.0 Offline</strong>.</p></div>
+</div>
+</section>
+
+</main>
+<footer>⚡ ZYNOVA — Learn. Calculate. Discover.</footer>
+
+<div class="modal" id="modal">
+<div class="modal-box">
+<div class="modal-head"><h2 id="modalTitle">ZYNOVA</h2><button class="close" id="modalClose">✕</button></div>
+<div id="modalBody"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<div class="onboarding show" id="onboarding">
+  <div class="onboard-box">
+    <div id="onboardStep"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ZYNOVA_DYNAMIC_USER_NAME_FIXED_V3 */
+function getZynovaUserName(){
+    try{
+        /* Always prefer the current account name. This prevents an old
+           cached name such as "Gift" from overriding a new user's name. */
+        const accountRaw = localStorage.getItem("zynovaAccount");
+        if(accountRaw){
+            const account = JSON.parse(accountRaw);
+            if(account && account.name && String(account.name).trim()){
+                const name = String(account.name).trim().replace(/\s+/g," ");
+                localStorage.setItem("zynovaUserName", name);
+                return name;
+            }
+        }
+
+        const userRaw = localStorage.getItem("zynovaUser");
+        if(userRaw){
+            const u = JSON.parse(userRaw);
+            if(u && u.name && String(u.name).trim()){
+                const name = String(u.name).trim().replace(/\s+/g," ");
+                localStorage.setItem("zynovaUserName", name);
+                return name;
+            }
+        }
+
+        const direct = localStorage.getItem("zynovaUserName");
+        if(direct && direct.trim()) return direct.trim();
+    }catch(e){}
+    return "";
+}
+
+function setZynovaUserName(name){
+    const clean = String(name || "").trim().replace(/\s+/g," ");
+    if(clean) localStorage.setItem("zynovaUserName", clean);
+    return clean;
+}
+
+function zynovaName(){
+    return getZynovaUserName() || "there";
+}
+
+function personalizeZynovaUI(){
+    const name = getZynovaUserName();
+    if(!name) return;
+
+    document.querySelectorAll("[data-zynova-name]").forEach(el=>{
+        el.textContent = name;
+    });
+
+    const welcome = document.getElementById("welcomeUser");
+    if(welcome) welcome.textContent = "Welcome, " + name + "! 👋";
+
+    const homeGreeting = document.getElementById("homeGreeting");
+    if(homeGreeting) homeGreeting.textContent = "Welcome, " + name + "! ⚡";
+
+    const topName = document.getElementById("topAccountName");
+    if(topName) topName.textContent = name;
+
+    const daily = document.getElementById("dailyGreeting");
+    if(daily) daily.textContent = name + ", here's your challenge for today!";
+
+    const trial = document.getElementById("trialGreeting");
+    if(trial) trial.textContent = name + ", your Premium trial is active.";
+
+    const profileName = document.getElementById("profileName");
+    if(profileName) profileName.textContent = name;
+
+    document.title = "ZYNOVA — " + name;
+}
+
+
+
+/* =========================================================
+   DATA
+========================================================= */
+const subjects=[
+["➗","Mathematics",["Fractions","Percentages","Algebra","Linear equations","Indices","Logarithms","Trigonometry","Geometry","Probability","Statistics","Mensuration"]],
+["📖","English",["Grammar","Nouns","Verbs","Tenses","Sentence construction","Comprehension","Vocabulary","Writing"]],
+["🗣️","Kiswahili",["Nomino","Vitenzi","Vivumishi","Sarufi","Insha","Ufahamu","Methali","Nahau"]],
+["⚛️","Physics",["Motion","Force","Work","Energy","Power","Pressure","Density","Elasticity","Thermal expansion","Waves","Electricity"]],
+["🧪","Chemistry",["Atoms","Elements","Compounds","Mixtures","Acids","Bases","Salts","Periodic table","Chemical reactions","Separation"]],
+["🧬","Biology",["Cells","Nutrition","Respiration","Photosynthesis","Transport","Reproduction","Ecology","Genetics","Classification"]],
+["🌍","Geography",["Weather","Climate","Rocks","Soils","Rivers","Map work","Population","Agriculture","Industry","Environment"]],
+["🏛️","History & Government",["Democracy","Constitution","Citizenship","Leadership","Colonialism","Independence","Government","Human rights"]],
+["💻","Computer Studies",["Hardware","Software","Algorithms","Programming","Networks","Internet","Cyber safety","Data","Operating systems"]],
+["🎵","Music",["Rhythm","Melody","Harmony","Notation","Scales","Intervals","Dynamics","Texture","Form"]],
+["🌱","Agriculture",["Soil","Crops","Livestock","Farm tools","Pests","Diseases","Irrigation","Conservation","Farm records"]],
+["🍎","Nutrition",["Nutrients","Balanced diet","Carbohydrates","Proteins","Fats","Vitamins","Minerals","Water","Deficiency diseases"]],
+["🙏","CRE / Religious Education",["Bible","Faith","Prayer","Christian values","Leadership","Stewardship","Relationships","Service"]],
+["🤝","Social Studies",["Community","Culture","Environment","Citizenship","Resources","Population","Social institutions"]],
+["🧑‍🤝‍🧑","Community Service Learning",["Community needs","Service","Teamwork","Leadership","Reflection","Problem solving"]],
+["🎨","Creative Arts",["Drawing","Painting","Design","Colour","Craft","Visual communication","Creativity"]]
+];
+
+const concepts=[
+"Fractions","Percentages","Algebra","Linear Equations","Indices","Logarithms","Trigonometry",
+"Pythagoras","Area","Volume","Probability","Statistics","Velocity","Acceleration","Force",
+"Work","Power","Energy","Momentum","Density","Pressure","Elasticity","Thermal Expansion",
+"Electricity","Waves","Photosynthesis","Respiration","Cells","Atoms","Acids and Bases"
+];
+
+const knowledge={
+acceleration:["Physics",["acceleration","accelerating","rate of change of velocity"],"Acceleration is the rate at which velocity changes with time.\n\nFormula:\na = (v − u) / t\n\nWhere a is acceleration, v is final velocity, u is initial velocity and t is time.\n\nSI unit: m/s²."],
+velocity:["Physics",["velocity","speed with direction"],"Velocity is the rate of change of displacement with time. It has both magnitude and direction.\n\nFormula: v = displacement / time\n\nSI unit: m/s."],
+speed:["Physics",["speed"],"Speed is distance travelled per unit time.\n\nFormula: speed = distance / time\n\nSI unit: m/s. Speed is a scalar quantity."],
+force:["Physics",["force","push or pull","newton"],"Force is a push or pull that can change motion or shape.\n\nNewton's second law: F = ma.\n\nSI unit: newton (N)."],
+mass:["Physics",["mass","amount of matter"],"Mass is the amount of matter in an object. SI unit: kilogram (kg). Mass is different from weight."],
+weight:["Physics",["weight","gravitational force"],"Weight is the gravitational force acting on an object.\n\nFormula: W = mg.\n\nNear Earth, g is approximately 9.8 m/s²."],
+work:["Physics",["work","mechanical work"],"In physics, work is done when a force causes displacement in the direction of the force.\n\nFormula: W = Fd.\n\nSI unit: joule (J)."],
+power:["Physics",["power","rate of doing work"],"Power is the rate of doing work.\n\nFormula: P = W/t.\n\nSI unit: watt (W)."],
+energy:["Physics",["energy","ability to do work"],"Energy is the ability to do work. Forms include kinetic, potential, chemical, electrical, thermal and light energy.\n\nKE = ½mv²\nPE = mgh."],
+momentum:["Physics",["momentum","quantity of motion"],"Momentum is the product of mass and velocity.\n\np = mv\n\nSI unit: kg m/s."],
+density:["Physics",["density"],"Density is mass per unit volume.\n\nρ = m/V\n\nSI unit: kg/m³."],
+"hookes law":["Physics",["hooke's law","hookes law","hooke law","elastic limit"],"Hooke's law states that, within the elastic limit, extension is directly proportional to applied force.\n\nF ∝ e\nFor a spring: F = ke."],
+pressure:["Physics",["pressure"],"Pressure is force acting normally per unit area.\n\nP = F/A\n\nSI unit: pascal (Pa)."],
+"thermal expansion":["Physics",["thermal expansion","expansion of solids"],"Thermal expansion is the increase in dimensions of a material when its temperature rises. It is used in applications such as expansion gaps in bridges and railway tracks."],
+photosynthesis:["Biology",["photosynthesis","plants make food"],"Photosynthesis is the process by which green plants make food using light energy.\n\nWord equation:\nCarbon dioxide + water → glucose + oxygen.\n\nChlorophyll absorbs the light energy."],
+"photosynthesis equation":["Biology",["photosynthesis equation","equation for photosynthesis"],"Balanced equation:\n6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂.\n\nLight energy and chlorophyll are required."],
+respiration:["Biology",["respiration","cellular respiration"],"Respiration is the chemical process by which cells release energy from food.\n\nAerobic respiration:\nGlucose + oxygen → carbon dioxide + water + energy."],
+cell:["Biology",["cell","basic unit of life"],"A cell is the basic structural and functional unit of living organisms. Animal cells include a membrane, cytoplasm and nucleus. Plant cells also have a cell wall, chloroplasts and a large permanent vacuole."],
+ecosystem:["Biology",["ecosystem","living and nonliving"],"An ecosystem contains living organisms and non-living environmental components interacting together. Biotic factors are living; abiotic factors include light, temperature, water and soil."],
+atom:["Chemistry",["atom","smallest unit of element"],"An atom is the smallest particle of an element that retains its chemical properties. It contains protons, neutrons and electrons."],
+element:["Chemistry",["element","chemical element"],"An element is a pure substance whose atoms have the same number of protons. Examples include oxygen, carbon, iron and copper."],
+compound:["Chemistry",["compound","chemical compound"],"A compound is a pure substance formed when different elements chemically combine in fixed proportions. Water is H₂O."],
+mixture:["Chemistry",["mixture"],"A mixture contains two or more substances physically combined rather than chemically bonded. Components can generally be separated by physical methods."],
+acid:["Chemistry",["acid","acids"],"An acid produces hydrogen ions, H⁺, in aqueous solution. Acids have pH below 7."],
+base:["Chemistry",["base","bases","alkali"],"A base can react with an acid and neutralize it. An alkali is a base that dissolves in water. Alkaline solutions have pH above 7."],
+democracy:["History & Government",["democracy","democratic government"],"Democracy is a system of government in which citizens participate in choosing leaders and influencing how they are governed. Principles include participation, elections, equality, rule of law and rights."],
+geography:["Geography",["geography"],"Geography is the study of Earth's physical features, people, places, environments and relationships between them. It includes physical and human geography."],
+computer:["Computer Studies",["computer","computers"],"A computer is an electronic device that accepts data as input, processes it according to instructions, stores information and produces output."],
+hardware:["Computer Studies",["hardware","computer hardware"],"Hardware means the physical components of a computer system, such as keyboard, mouse, monitor, processor, RAM and storage."],
+software:["Computer Studies",["software","computer software"],"Software is a collection of programs and instructions that tell a computer what to do. Examples include operating systems, browsers and word processors."],
+algorithm:["Computer Studies",["algorithm","algorithms"],"An algorithm is a finite sequence of clear, ordered steps used to solve a problem or perform a task."],
+internet:["Computer Studies",["internet","the internet"],"The Internet is a worldwide network of interconnected computer networks. It supports websites, email, communication and file transfer."],
+music:["Music",["music","music definition"],"Music is organized sound and silence. Important elements include rhythm, melody, harmony, dynamics, texture, timbre and form."],
+rhythm:["Music",["rhythm"],"Rhythm is the pattern of sounds and silences organized in time."],
+noun:["English",["noun","what is a noun"],"A noun names a person, place, thing, animal or idea. Examples: teacher, Kenya, book, dog and freedom."],
+verb:["English",["verb","what is a verb"],"A verb expresses an action, occurrence or state of being. Examples: run, write, think, become and is."],
+nomino:["Kiswahili",["nomino","what is nomino","nomino ni nini"],"Nomino ni neno linalotaja mtu, mahali, kitu, mnyama au jambo. Mfano: mtoto, shule, kitabu, simba."],
+agriculture:["Agriculture",["agriculture","farming"],"Agriculture is the science and practice of growing crops and keeping livestock for food, materials and other useful products."],
+nutrition:["Nutrition",["nutrition","balanced diet"],"Nutrition is the process by which organisms obtain and use nutrients. A balanced diet provides needed nutrients in appropriate amounts."],
+probability:["Mathematics",["probability","chance"],"Probability measures how likely an event is to occur.\n\nFor equally likely outcomes:\nProbability = favourable outcomes / total possible outcomes.\n\nIt ranges from 0 to 1."],
+pythagoras:["Mathematics",["pythagoras","pythagoras theorem","right angled triangle"],"Pythagoras' theorem applies to right-angled triangles.\n\nc² = a² + b²\n\nc is the hypotenuse, opposite the right angle."],
+percentage:["Mathematics",["percentage","percentages","percent"],"A percentage is a fraction expressed out of 100.\n\n25% = 25/100 = 0.25.\n\nPercentage of a quantity = percentage × quantity / 100."],
+area:["Mathematics",["area","area formula"],"Area measures the surface inside a two-dimensional shape.\n\nRectangle: A = length × width\nTriangle: A = ½ × base × height\nCircle: A = πr²."],
+volume:["Mathematics",["volume","volume formula"],"Volume measures the space occupied by a three-dimensional object.\n\nCuboid: V = length × width × height."],
+trigonometry:["Mathematics",["trigonometry","trig","sine cosine tangent"],"Trigonometry studies relationships between angles and sides of triangles.\n\nsin θ = opposite/hypotenuse\ncos θ = adjacent/hypotenuse\ntan θ = opposite/adjacent."],
+fraction:["Mathematics",["fraction","fractions"],"A fraction represents part of a whole. The numerator is above the line and the denominator is below it. To add fractions with different denominators, first find a common denominator."],
+algebra:["Mathematics",["algebra"],"Algebra uses letters and symbols to represent numbers and relationships. Example: 2x + 3 = 9 can be solved by isolating x."],
+indices:["Mathematics",["indices","index laws","exponents"],"Indices are powers. Useful laws include aᵐ × aⁿ = aᵐ⁺ⁿ, aᵐ/aⁿ = aᵐ⁻ⁿ and (aᵐ)ⁿ = aᵐⁿ, for valid non-zero bases."],
+statistics:["Mathematics",["statistics","mean median mode"],"Statistics involves collecting, organizing, analyzing and interpreting data. Mean = total ÷ number of values. Median is the middle value when ordered. Mode is the most frequent value."],
+wave:["Physics",["wave","waves"],"A wave is a disturbance that transfers energy from one place to another. Frequency is measured in hertz and wavelength in metres."],
+electricity:["Physics",["electricity","current","voltage","resistance"],"Electricity involves electric charge. In a simple circuit, current is charge flow, voltage is potential difference and resistance opposes current. Ohm's law: V = IR."],
+"balanced diet":["Nutrition",["balanced diet","healthy diet"],"A balanced diet supplies the body with appropriate amounts of carbohydrates, proteins, fats, vitamins, minerals, fibre and water."],
+"water cycle":["Geography",["water cycle","hydrological cycle"],"The water cycle describes continuous movement of water through evaporation, condensation, precipitation, collection and related processes."],
+"climate":["Geography",["climate"],"Climate is the long-term pattern of weather conditions in a place, usually considered over many years."],
+"renewable energy":["Geography",["renewable energy","renewable resources"],"Renewable energy comes from sources naturally replenished on a human timescale, such as sunlight, wind, flowing water and geothermal heat."],
+"operating system":["Computer Studies",["operating system","os"],"An operating system is system software that manages computer hardware and provides services and an interface for applications and users."],
+"binary":["Computer Studies",["binary","binary number","base 2"],"Binary is a base-2 number system using only 0 and 1. Computers use binary to represent and process digital information."],
+"data":["Computer Studies",["data","information"],"Data is raw facts or observations. Information is processed or organized data that has meaning and usefulness."]
+};
+
+/* =========================================================
+   UTILITY / STORAGE
+========================================================= */
+const defaultStats={questions:0,score:0,calculations:0,ai:0,quizQuestions:0};
+let stats=loadJSON("zynovaStats",defaultStats);
+let calcExpression="";
+let memory=Number(localStorage.getItem("zynovaMemory")||0);
+let quizCategory="Mixed";
+let quizIndex=0,quizScore=0,quizActive=false,quizAnswered=false;
+let compactNumbers=localStorage.getItem("zynovaCompact")==="true";
+
+function loadJSON(key,fallback){
+ try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}
+}
+function saveStats(){localStorage.setItem("zynovaStats",JSON.stringify(stats));renderStats();cloudSync()}
+function inc(key,n=1){stats[key]=(stats[key]||0)+n;saveStats()}
+function toast(msg){
+ const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+ clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2200)
+}
+function fmt(n){
+ if(!Number.isFinite(n))return "Error";
+ if(compactNumbers&&Math.abs(n)>=1e9)return n.toExponential(8);
+ return Number(n.toFixed(12)).toString()
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+function showSection(id){
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ const target=document.getElementById(id);
+ if(target)target.classList.add("active");
+ document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("#mainNav button").forEach(btn=>btn.addEventListener("click",()=>showSection(btn.dataset.section)));
+document.querySelectorAll(".open-section").forEach(btn=>btn.addEventListener("click",()=>showSection(btn.dataset.target)));
+
+/* =========================================================
+   MODALS
+========================================================= */
+const modal=document.getElementById("modal");
+function openModal(title,body){
+ document.getElementById("modalTitle").textContent=title;
+ document.getElementById("modalBody").innerHTML=body;
+ modal.classList.add("show")
+}
+function closeModal(){modal.classList.remove("show")}
+document.getElementById("modalClose").addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+document.getElementById("aboutBtn").addEventListener("click",()=>openModal("⚡ About ZYNOVA",`
+<p>ZYNOVA is an offline educational calculator and learning application.</p>
+<div class="notice"><strong>Version:</strong> ZYNOVA 2.0 Offline</div>
+<ul class="list">
+<li>Scientific calculator with history and memory</li>
+<li>Offline educational AI knowledge engine</li>
+<li>16 subject areas</li>
+<li>Quick Solve concepts</li>
+<li>Interactive quizzes</li>
+<li>Daily Challenge</li>
+<li>Statistics and achievements</li>
+<li>Unit converter</li>
+<li>Dark/light mode</li>
+<li>Backup and restore</li>
+<li>Responsive phone, tablet and laptop layout</li>
+<li>Calculator favicon</li>
+</ul>
+<p style="margin-top:12px">The offline AI is intentionally transparent: it uses the knowledge and reasoning rules included in this page. It is not a replacement for a connected large language model.</p>
+`));
+
+/* =========================================================
+   SUBJECTS / QUICK SOLVE
+========================================================= */
+function buildSubjects(){
+ const grid=document.getElementById("subjectGrid");grid.innerHTML="";
+ subjects.forEach(([icon,name,topics])=>{
+  const div=document.createElement("div");div.className="card subject";
+  div.innerHTML=`<div class="subject-icon">${icon}</div><h3>${name}</h3><p class="muted">${topics.length} learning areas</p>`;
+  div.addEventListener("click",()=>openSubject(name,icon,topics));grid.appendChild(div)
+ })
+}
+function openSubject(name,icon,topics){
+ openModal(`${icon} ${name}`,`<p class="muted">Tap a topic to send it to ZYNOVA AI.</p><div class="topic-grid">${topics.map(t=>`<button class="topic-btn" data-topic="${escapeAttr(t)}">📘 ${escapeHTML(t)}</button>`).join("")}</div>`);
+ document.querySelectorAll(".topic-btn").forEach(b=>b.addEventListener("click",()=>{
+  closeModal();showSection("ai");askAI("Explain "+b.dataset.topic+" in "+name+" simply");
+ }))
+}
+function buildConcepts(){
+ const grid=document.getElementById("conceptGrid");grid.innerHTML="";
+ concepts.forEach(c=>{
+  const d=document.createElement("div");d.className="concept";
+  d.innerHTML=`<h3>⚡ ${c}</h3><p class="muted">Tap to open explanation</p>`;
+  d.addEventListener("click",()=>askAI("Explain "+c+" simply"));grid.appendChild(d)
+ })
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function escapeAttr(s){return escapeHTML(s)}
+function askAI(text){showSection("ai");document.getElementById("aiInput").value=text;sendAI()}
+
+/* =========================================================
+   TEXT / AI ENGINE
+========================================================= */
+function normalize(text){
+ return text.toLowerCase().replace(/[’]/g,"'").replace(/\s+/g," ").trim()
+}
+function findKnowledge(question){
+ const q=normalize(question);let best=null,bestScore=0;
+ for(const key in knowledge){
+  const [subject,aliases,answer]=knowledge[key];let score=0;
+  if(q.includes(normalize(key)))score+=12;
+  aliases.forEach(a=>{
+   const x=normalize(a);
+   if(q.includes(x))score+=9;
+   x.split(/\s+/).forEach(w=>{if(w.length>3&&q.includes(w))score+=1})
+  });
+  if(score>bestScore){bestScore=score;best={subject,answer,key}}
+ }
+ return bestScore>=3?best:null
+}
+function solveEquation(q){
+ let s=normalize(q).replace(/\bsolve\b/g,"").replace(/\bfind x\b/g,"").replace(/\s+/g,"");
+ let m=s.match(/^([+-]?\d*\.?\d*)x([+-]\d*\.?\d+)?=([+-]?\d*\.?\d+)$/);
+ if(!m)return null;
+ let a=m[1];if(a===""||a==="+")a="1";if(a==="-")a="-1";
+ a=Number(a);const b=m[2]?Number(m[2]):0,c=Number(m[3]);
+ if(!a)return null;const x=(c-b)/a;
+ return `Let's solve it step-by-step.
+
+Equation:
+${a}x ${b>=0?"+ "+b:b} = ${c}
+
+Move the constant:
+${a}x = ${c-b}
+
+Divide by ${a}:
+x = ${fmt(x)}
+
+Answer:
+x = ${fmt(x)}`;
+}
+function factorial(n){if(!Number.isInteger(n)||n<0||n>170)return null;let r=1;for(let i=2;i<=n;i++)r*=i;return r}
+function safeMath(expr){
+ let e=expr.replace(/×/g,"*").replace(/÷/g,"/").replace(/π/g,"Math.PI").replace(/\be\b/g,"Math.E");
+ if(!/^[0-9+\-*/%().,\sA-Za-z]+$/.test(e))return null;
+ if(/(?:window|document|eval|Function|constructor|prototype|localStorage)/i.test(e))return null;
+ try{
+  const result=Function('"use strict";return ('+e+')')();
+  return typeof result==="number"&&Number.isFinite(result)?result:null
+ }catch{return null}
+}
+function arithmeticFromQuestion(q){
+ let s=q.replace(/[?]/g,"").replace(/what is/ig,"").replace(/calculate/ig,"").replace(/solve/ig,"").replace(/evaluate/ig,"").trim();
+ if(!/^[0-9+\-*/%().\s×÷]+$/.test(s))return null;
+ return safeMath(s)
+}
+function questionIntent(q){
+ const n=normalize(q);
+ if(n.includes("what is")||n.startsWith("define")||n.includes("meaning of"))return"definition";
+ if(n.includes("explain")||n.includes("describe")||n.includes("how does"))return"explanation";
+ if(n.includes("difference")||n.includes("compare"))return"comparison";
+ if(n.includes("advantages")||n.includes("disadvantages")||n.includes("benefits"))return"list";
+ return"general"
+}
+function zynovaIdentity(q){
+ const n=normalize(q).replace(/[?!.]+$/g,"").trim();
+ const creator=["who made you","who created you","who built you","who developed you","who is your creator","who invented you","who is behind zynova","who owns zynova","who programmed you","who designed you","what is your creator name","what is your creator's name","what is your creators name","tell me about your creator"];
+ if(creator.some(x=>n===x||n.includes(x)))return `🤖 I was created as part of the ZYNOVA project by Gift Inventor.
+
+⚡ ZYNOVA is an educational calculator and offline learning assistant.
+
+My purpose is to help students learn, calculate, practise and understand school topics across many subjects.
+
+I am an offline educational system, so my answers come from the knowledge and reasoning built into this version.`;
+ if(["what are you","what is zynova","what is zynova ai","who are you"].some(x=>n===x||n.includes(x)))return `⚡ I am ZYNOVA AI.
+
+I am the educational assistant inside ZYNOVA Calculator. I am designed to help with learning, calculations, explanations, examples, quizzes and school subjects.`;
+ if(["what is your purpose","what do you do","why were you created","what is your job"].some(x=>n===x||n.includes(x)))return `🎯 My purpose is to make learning easier and more interactive.
+
+I can help students with:
+🧮 Calculations
+📚 School topics
+🤖 Educational questions
+📝 Explanations and examples
+🎮 Practice and quizzes
+🏆 Learning progress`;
+ if(["when were you created","when was zynova created","when did zynova start","when were you made"].some(x=>n===x||n.includes(x)))return `⚡ ZYNOVA is an evolving project created and developed as an educational learning system. It continues to be upgraded with new features, knowledge and tools.`;
+ return null;
+}
+function generateAI(q){
+ const n=normalize(q);
+  const identity=zynovaIdentity(q);
+  if(identity)return identity;
+ if(!n)return"Please ask me a question. 🙂";
+ if(/^(hi|hello|hey|yo|good morning|good afternoon|good evening)$/.test(n)){const name=getZynovaUserName();return name?`Hello, ${name}! 👋 I'm ZYNOVA AI. What would you like to learn today?`:`Hello! 👋 I'm ZYNOVA AI. What would you like to learn today?`;}
+ if(n.includes("thank"))return"You're welcome! ⚡ Keep learning!";
+ if(n.includes("what can you do")||n.includes("what do you know"))return`I'm ZYNOVA AI, an offline educational tutor.
+
+I can help with:
+➗ Mathematics
+📖 English
+🗣️ Kiswahili
+⚛️ Physics
+🧪 Chemistry
+🧬 Biology
+🌍 Geography
+🏛️ History & Government
+💻 Computer Studies
+🎵 Music
+🌱 Agriculture
+🍎 Nutrition
+🙏 CRE / Religious Education
+🤝 Social Studies
+🧑‍🤝‍🧑 Community Service Learning
+🎨 Creative Arts
+
+I can define terms, explain concepts, solve supported calculations, work through simple equations, give examples, compare ideas and simplify explanations.
+
+Important: because I am offline, I cannot literally know every possible question. My coverage depends on the knowledge built into this version.`;
+ const eq=solveEquation(q);if(eq)return eq;
+ const arithmetic=arithmeticFromQuestion(q);
+ if(arithmetic!==null){inc("calculations");return`Let's calculate it:
+
+${q}
+
+= ${fmt(arithmetic)}
+
+Answer: ${fmt(arithmetic)}`;}
+ if(n.includes("i don't understand")||n.includes("i dont understand"))return"No problem. 👍 Tell me the exact topic and I will break it into smaller steps with an example.";
+ if(n.includes("give me an example")||n.includes("give example"))return"Sure! Tell me the topic and I will give you a school-friendly example.";
+ const item=findKnowledge(q);
+ if(item){
+  if(questionIntent(q)==="explanation")return`🧑‍🏫 ${item.subject}\n\n${item.answer}\n\nIf you want, ask me for an example or a simpler explanation.`;
+  return`📚 ${item.subject}\n\n${item.answer}`;
+ }
+ const hints={
+  mathematics:["math","mathematics","algebra","geometry","trigonometry","fraction","equation","probability"],
+  physics:["physics","force","energy","power","motion","velocity","acceleration","momentum"],
+  chemistry:["chemistry","chemical","atom","element","compound","acid","base"],
+  biology:["biology","cell","plant","animal","photosynthesis","respiration"],
+  computer:["computer","programming","algorithm","software","hardware","internet"],
+  geography:["geography","climate","weather","map","river","mountain"],
+  english:["english","grammar","noun","verb","adjective"],
+  kiswahili:["kiswahili","nomino","kitenzi","sarufi"]
+ };
+ for(const subject in hints)if(hints[subject].some(w=>n.includes(w)))return`📚 I detected ${subject}.
+
+I don't yet have a specific entry for the exact topic in this offline knowledge base.
+
+Try:
+• Define [topic]
+• Explain [topic]
+• Give an example of [topic]
+• Compare [A] and [B]
+• Calculate [problem]
+
+For the best answer, include the exact topic and your grade/level.`;
+ return`🤔 I don't have a specific offline knowledge entry for that question yet.
+
+Try asking:
+• "What is ...?"
+• "Define ..."
+• "Explain ..."
+• "Calculate ..."
+• "Solve ..."
+• "Give an example of ..."
+• "What is the difference between ...?"
+
+You can also include the subject, for example:
+"Grade 10 Physics: explain pressure."`;
+}
+function addMessage(text,type){
+ const chat=document.getElementById("chat"),msg=document.createElement("div"),bubble=document.createElement("div");
+ msg.className="message "+type;bubble.className="bubble";bubble.textContent=text;msg.appendChild(bubble);chat.appendChild(msg);chat.scrollTop=chat.scrollHeight
+}
+function sendAI(){
+ const input=document.getElementById("aiInput"),q=input.value.trim();if(!q)return;
+ addMessage(q,"user");input.value="";inc("questions");inc("ai");
+ setTimeout(()=>addMessage(generateAI(q),"ai"),180)
+}
+document.getElementById("sendAiBtn").addEventListener("click",sendAI);
+document.getElementById("aiInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendAI()}});
+document.querySelectorAll(".quick-ai button").forEach(b=>b.addEventListener("click",()=>askAI(b.dataset.ai)));
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+function updateCalc(){
+ document.getElementById("calcExpression").textContent=calcExpression;
+ document.getElementById("calcAnswer").textContent=calcExpression||"0"
+}
+function calcInput(v){calcExpression+=v;updateCalc()}
+function calcClear(){calcExpression="";updateCalc()}
+function calcBack(){calcExpression=calcExpression.slice(0,-1);updateCalc()}
+function calcFunction(fn){
+ const openFns={sqrt:"Math.sqrt(",log:"Math.log10(",ln:"Math.log("};
+ if(openFns[fn])calcExpression+=openFns[fn];
+ else if(fn==="sin")calcExpression+="sinD(";
+ else if(fn==="cos")calcExpression+="cosD(";
+ else if(fn==="tan")calcExpression+="tanD(";
+ else if(fn==="asin")calcExpression+="asinD(";
+ else if(fn==="acos")calcExpression+="acosD(";
+ else if(fn==="atan")calcExpression+="atanD(";
+ else if(fn==="square")calcExpression+="**2";
+ else if(fn==="cube")calcExpression+="**3";
+ else if(fn==="percent")calcExpression+="/100";
+ else if(fn==="factorial"){calcExpression+="!";}
+ else if(fn==="reciprocal")calcExpression="1/("+calcExpression+")";
+ else if(fn==="abs")calcExpression="Math.abs("+calcExpression+")";
+ else if(fn==="negate")calcExpression="-("+calcExpression+")";
+ else if(fn==="exp")calcExpression+="Math.exp(";
+ updateCalc()
+}
+function calculate(){
+ let e=calcExpression;
+ if(e.includes("!")){
+  if(!/^[-+]?\d+!$/.test(e)){document.getElementById("calcAnswer").textContent="Error";return}
+  const r=factorial(Number(e.slice(0,-1)));if(r===null){document.getElementById("calcAnswer").textContent="Error";return}
+  document.getElementById("calcAnswer").textContent=fmt(r);addHistory(e,r);inc("calculations");return
+ }
+ e=e.replace(/sinD\(/g,"sinD(").replace(/cosD\(/g,"cosD(").replace(/tanD\(/g,"tanD(").replace(/asinD\(/g,"asinD(").replace(/acosD\(/g,"acosD(").replace(/atanD\(/g,"atanD(");
+ if(!/^[0-9+\-*/%().,\sA-Za-z]+$/.test(e)||/[^0-9+\-*/%().,\sA-Za-z]/.test(e)){document.getElementById("calcAnswer").textContent="Error";return}
+ try{
+  const result=Function("sinD","cosD","tanD","asinD","acosD","atanD",'"use strict";return ('+e+')')(
+   x=>Math.sin(x*Math.PI/180),x=>Math.cos(x*Math.PI/180),x=>Math.tan(x*Math.PI/180),
+   x=>Math.asin(x)*180/Math.PI,x=>Math.acos(x)*180/Math.PI,x=>Math.atan(x)*180/Math.PI
+  );
+  if(typeof result!=="number"||!Number.isFinite(result))throw new Error();
+  document.getElementById("calcAnswer").textContent=fmt(result);addHistory(e,result);inc("calculations")
+ }catch{document.getElementById("calcAnswer").textContent="Error"}
+}
+function addHistory(expression,result){
+ const h=loadJSON("zynovaHistory",[]);
+ h.unshift({expression,result,time:new Date().toLocaleString()});
+ localStorage.setItem("zynovaHistory",JSON.stringify(h.slice(0,100)));renderHistory();cloudSync()
+}
+function renderHistory(){
+ const box=document.getElementById("history"),h=loadJSON("zynovaHistory",[]);box.innerHTML="";
+ h.forEach((x,i)=>{
+  const d=document.createElement("div");d.className="history-item";
+  d.innerHTML=`<span>${escapeHTML(String(x.expression))} = <strong>${escapeHTML(String(x.result))}</strong></span><button class="secondary small" data-history="${i}">Use</button>`;
+  d.querySelector("button").addEventListener("click",()=>{calcExpression=String(x.expression);updateCalc();showSection("calculator")});
+  box.appendChild(d)
+ })
+}
+document.querySelectorAll("[data-calc]").forEach(b=>b.addEventListener("click",()=>calcInput(b.dataset.calc)));
+document.querySelectorAll("[data-fn]").forEach(b=>b.addEventListener("click",()=>calcFunction(b.dataset.fn)));
+document.querySelector('[data-action="clear"]').addEventListener("click",calcClear);
+document.querySelector('[data-action="back"]').addEventListener("click",calcBack);
+document.querySelector('[data-action="equals"]').addEventListener("click",calculate);
+document.getElementById("clearHistory").addEventListener("click",()=>{localStorage.removeItem("zynovaHistory");renderHistory();cloudSync();toast("History cleared")});
+document.getElementById("mc").addEventListener("click",()=>{memory=0;localStorage.setItem("zynovaMemory","0");toast("Memory cleared")});
+document.getElementById("mr").addEventListener("click",()=>{calcInput(String(memory));toast("Memory recalled")});
+document.getElementById("mplus").addEventListener("click",()=>{const v=safeMath(calcExpression);if(v!==null){memory+=v;localStorage.setItem("zynovaMemory",memory);toast("Added to memory")}});
+document.getElementById("mminus").addEventListener("click",()=>{const v=safeMath(calcExpression);if(v!==null){memory-=v;localStorage.setItem("zynovaMemory",memory);toast("Subtracted from memory")}});
+document.getElementById("ms").addEventListener("click",()=>{const v=safeMath(calcExpression);if(v!==null){memory=v;localStorage.setItem("zynovaMemory",memory);toast("Value stored")}});
+
+/* keyboard calculator */
+document.addEventListener("keydown",e=>{
+ if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName))return;
+ if(/^[0-9+\-*/().]$/.test(e.key)){showSection("calculator");calcInput(e.key)}
+ else if(e.key==="Enter"){showSection("calculator");calculate()}
+ else if(e.key==="Backspace"){calcBack()}
+ else if(e.key==="Escape"){calcClear()}
+});
+
+
+/* =========================================================
+   PREMIUM / PRO CALCULATOR TOOLS
+========================================================= */
+function normalizeZynovaPlanValue(plan){
+  const p=String(plan||"free").trim().toLowerCase();
+  if(p==="pro"||p==="premium"||p==="trial") return p;
+  return "free";
+}
+function currentZynovaPlan(){
+  try{
+    const a=typeof getAccount==="function"?getAccount():null;
+    return normalizeZynovaPlanValue(typeof effectivePlan==="function"?effectivePlan(a):"free");
+  }catch(e){return "free"}
+}
+function hasPremiumCalculatorAccess(){
+  const p=currentZynovaPlan();
+  return p==="trial"||p==="premium"||p==="pro";
+}
+function hasProCalculatorAccess(){
+  return currentZynovaPlan()==="pro";
+}
+function requireCalculatorTool(level){
+  const required=String(level||"premium").toLowerCase();
+  const ok=required==="pro"?hasProCalculatorAccess():hasPremiumCalculatorAccess();
+  if(ok) return true;
+  openPlansModal();
+  toast(required==="pro"?"👑 Pro is required for this tool.":"⭐ Premium is required for this tool.");
+  return false;
+}
+function gcdCalc(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b){const t=a%b;a=b;b=t}return a}
+function lcmCalc(a,b){return a===0||b===0?0:Math.abs(a*b)/gcdCalc(a,b)}
+function primeFactorsCalc(n){n=Math.abs(Math.trunc(n));const f=[];if(n<2)return f;for(let p=2;p*p<=n;p+=(p===2?1:2))while(n%p===0){f.push(p);n/=p}if(n>1)f.push(n);return f}
+function showCalcToolOutput(text){const el=document.getElementById("calcToolOutput");if(!el)return;el.style.display="block";el.textContent=text}
+function parseToolNumber(id){const v=Number(document.getElementById(id)?.value);return Number.isFinite(v)?v:null}
+function runCalcTool(tool){
+ const premiumTools=["fraction","percentage","prime","gcd"];if(!requireCalculatorTool(premiumTools.includes(tool)?"premium":"pro"))return;let out="";
+ if(tool==="fraction"){const n=parseToolNumber("fracNum"),d=parseToolNumber("fracDen");if(n===null||d===null||d===0){showCalcToolOutput("Enter a valid numerator and a non-zero denominator.");return}const g=gcdCalc(n,d),sn=n/g,sd=d/g;out=`⭐ Premium Fraction Simplifier\n\n${n}/${d} = ${sn}/${sd}`}
+ else if(tool==="percentage"){const a=parseToolNumber("pctA"),b=parseToolNumber("pctB");if(a===null||b===null||b===0){showCalcToolOutput("Enter a valid part and a non-zero whole.");return}out=`⭐ Premium Percentage Tool\n\n${a} is ${fmt((a/b)*100)}% of ${b}.`}
+ else if(tool==="prime"){const n=parseToolNumber("primeN");if(n===null||n<2||!Number.isInteger(n)){showCalcToolOutput("Enter a whole number of 2 or greater.");return}out=`⭐ Premium Prime Factorization\n\n${n} = ${primeFactorsCalc(n).join(" × ")}`}
+ else if(tool==="gcd"){const a=parseToolNumber("gcdA"),b=parseToolNumber("gcdB");if(a===null||b===null||!Number.isInteger(a)||!Number.isInteger(b)){showCalcToolOutput("Enter two whole numbers.");return}out=`⭐ Premium GCD / LCM\n\nGCD(${a}, ${b}) = ${gcdCalc(a,b)}\nLCM(${a}, ${b}) = ${lcmCalc(a,b)}`}
+ else if(tool==="equation"){const a=parseToolNumber("eqA"),b=parseToolNumber("eqB"),c=parseToolNumber("eqC");if(a===null||b===null||c===null){showCalcToolOutput("Enter values for a, b and c.");return}if(a===0&&b===0){showCalcToolOutput(c===0?"Every number is a solution.":"No solution.");return}if(a===0){const x=-c/b;out=`👑 Pro Equation Solver — Linear\n\nEquation: ${b}x + ${c} = 0\n\n${b}x = ${-c}\nx = ${fmt(x)}`}else{const disc=b*b-4*a*c;if(disc>0){const x1=(-b+Math.sqrt(disc))/(2*a),x2=(-b-Math.sqrt(disc))/(2*a);out=`👑 Pro Equation Solver — Quadratic\n\nEquation: ${a}x² + ${b}x + ${c} = 0\n\nDiscriminant = ${fmt(disc)}\nx₁ = ${fmt(x1)}\nx₂ = ${fmt(x2)}`}else if(disc===0){const x=-b/(2*a);out=`👑 Pro Equation Solver — Quadratic\n\nEquation: ${a}x² + ${b}x + ${c} = 0\n\nDiscriminant = 0\nx = ${fmt(x)}`}else{const real=-b/(2*a),imag=Math.sqrt(-disc)/(2*a);out=`👑 Pro Equation Solver — Quadratic\n\nEquation: ${a}x² + ${b}x + ${c} = 0\n\nDiscriminant < 0\nx₁ = ${fmt(real)} + ${fmt(imag)}i\nx₂ = ${fmt(real)} − ${fmt(imag)}i`}}
+ }
+ else if(tool==="statistics"){const raw=document.getElementById("statsData")?.value||"",nums=raw.split(/[,\s]+/).map(Number).filter(Number.isFinite);if(!nums.length){showCalcToolOutput("Enter numbers separated by commas.");return}const sorted=[...nums].sort((x,y)=>x-y),sum=nums.reduce((a,b)=>a+b,0),mean=sum/nums.length,median=sorted.length%2?sorted[(sorted.length-1)/2]:(sorted[sorted.length/2-1]+sorted[sorted.length/2])/2,freq={};nums.forEach(x=>freq[x]=(freq[x]||0)+1);const maxFreq=Math.max(...Object.values(freq)),modes=maxFreq===1?[]:Object.keys(freq).filter(k=>freq[k]===maxFreq).map(Number),variance=nums.reduce((acc,x)=>acc+(x-mean)**2,0)/nums.length;out=`👑 Pro Statistics Analyzer\n\nCount: ${nums.length}\nSum: ${fmt(sum)}\nMean: ${fmt(mean)}\nMedian: ${fmt(median)}\nMode: ${modes.length?modes.join(", "):"No mode"}\nMinimum: ${fmt(sorted[0])}\nMaximum: ${fmt(sorted[sorted.length-1])}\nPopulation variance: ${fmt(variance)}\nPopulation standard deviation: ${fmt(Math.sqrt(variance))}`}
+ else if(tool==="matrix"){const a=parseToolNumber("m11"),b=parseToolNumber("m12"),c=parseToolNumber("m21"),d=parseToolNumber("m22");if([a,b,c,d].some(x=>x===null)){showCalcToolOutput("Enter all four matrix values.");return}const det=a*d-b*c;if(det===0)out=`👑 Pro 2×2 Matrix Solver\n\nDeterminant = 0\nThe matrix has no inverse.`;else out=`👑 Pro 2×2 Matrix Solver\n\nDeterminant = ${fmt(det)}\n\nInverse:\n| ${fmt(d/det)}  ${fmt(-b/det)} |\n| ${fmt(-c/det)}  ${fmt(a/det)} |`}
+ showCalcToolOutput(out)
+}
+function updateCalculatorToolsUI(){
+  const p=currentZynovaPlan();
+  const el=document.getElementById("calcToolsPlan");
+  if(el){
+    el.textContent=planLabel(p);
+    el.title=p==="pro"?"All Premium and Pro calculator tools are unlocked.":p==="trial"||p==="premium"?"Premium calculator tools are unlocked.":"Upgrade to unlock advanced tools.";
+  }
+  document.querySelectorAll(".calc-tool").forEach(card=>{
+    const isPro=card.classList.contains("pro");
+    const isPremium=card.classList.contains("premium");
+    const ok=isPro?hasProCalculatorAccess():isPremium?hasPremiumCalculatorAccess():true;
+    card.classList.toggle("tool-lock",!ok);
+    card.setAttribute("aria-disabled",String(!ok));
+  });
+  const status=document.getElementById("zynovaCalcPlanStatus");
+  if(status){
+    if(p==="pro") status.innerHTML="👑 <strong>Pro Active</strong> — Premium + all advanced calculator tools are unlocked.";
+    else if(p==="premium") status.innerHTML="⭐ <strong>Premium Active</strong> — Premium calculator tools are unlocked.";
+    else if(p==="trial") status.innerHTML="🎁 <strong>Premium Trial Active</strong> — Premium calculator tools are temporarily unlocked.";
+    else status.innerHTML="🆓 <strong>Free</strong> — The full scientific calculator remains available. Upgrade for additional calculator tools.";
+  }
+}
+
+/* =========================================================
+   QUIZZES
+========================================================= */
+const quizBank=[
+{cat:"Mathematics",q:"What is 25% of 200?",o:["25","40","50","75"],a:2},
+{cat:"Mathematics",q:"What is the area of a 5 cm by 4 cm rectangle?",o:["9 cm²","20 cm²","10 cm²","25 cm²"],a:1},
+{cat:"Mathematics",q:"Which theorem applies to a right-angled triangle?",o:["Pythagoras' theorem","Newton's law","Ohm's law","Hooke's law"],a:0},
+{cat:"Physics",q:"What is the SI unit of force?",o:["Joule","Newton","Watt","Pascal"],a:1},
+{cat:"Physics",q:"What is the formula for density?",o:["mV","m/V","V/m","F/a"],a:1},
+{cat:"Physics",q:"What is the SI unit of power?",o:["Newton","Joule","Watt","Kilogram"],a:2},
+{cat:"Biology",q:"Which organelle contains chlorophyll?",o:["Nucleus","Mitochondrion","Chloroplast","Ribosome"],a:2},
+{cat:"Biology",q:"What gas is used by plants during photosynthesis?",o:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],a:2},
+{cat:"Chemistry",q:"What is the smallest particle of an element retaining its chemical properties?",o:["Cell","Atom","Tissue","Mixture"],a:1},
+{cat:"Chemistry",q:"A solution with pH below 7 is generally:",o:["Acidic","Neutral","Alkaline","Metallic"],a:0},
+{cat:"Computer Studies",q:"What does CPU stand for?",o:["Central Processing Unit","Computer Personal Unit","Central Program Utility","Computer Processing Utility"],a:0},
+{cat:"Computer Studies",q:"Which is hardware?",o:["Operating system","Keyboard","Browser","Program"],a:1},
+{cat:"Geography",q:"Climate refers mainly to:",o:["One afternoon's weather","Long-term weather patterns","A single storm","A map symbol"],a:1},
+{cat:"English",q:"Which word is a noun?",o:["Run","Beautiful","Teacher","Quickly"],a:2},
+{cat:"Kiswahili",q:"Neno 'mtoto' ni aina gani ya neno?",o:["Nomino","Kitenzi","Kivumishi","Kielezi"],a:0},
+{cat:"Music",q:"Rhythm is mainly the organization of:",o:["Colour","Sound and silence in time","Chemical elements","Maps"],a:1},
+{cat:"Agriculture",q:"Agriculture mainly involves:",o:["Growing crops and keeping livestock","Only computer programming","Only music","Only map drawing"],a:0},
+{cat:"Nutrition",q:"Which is a nutrient?",o:["Protein","Plastic","Glass","Steel"],a:0}
+];
+function buildGameTabs(){
+ const tabs=document.getElementById("gameTabs");
+ ["Mixed","Mathematics","Physics","Chemistry","Biology","Computer Studies","Languages","General"].forEach(c=>{
+  const b=document.createElement("button");b.textContent=c;b.classList.toggle("active",c===quizCategory);
+  b.addEventListener("click",()=>{quizCategory=c;document.querySelectorAll(".game-tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");startQuiz()});tabs.appendChild(b)
+ })
+}
+function filteredQuiz(){
+ if(quizCategory==="Mixed")return quizBank;
+ if(quizCategory==="Languages")return quizBank.filter(q=>["English","Kiswahili"].includes(q.cat));
+ if(quizCategory==="General")return quizBank.filter(q=>!["Mathematics","Physics","Chemistry","Biology","Computer Studies","English","Kiswahili"].includes(q.cat));
+ return quizBank.filter(q=>q.cat===quizCategory)
+}
+function startQuiz(){
+ const list=filteredQuiz();if(!list.length)return;
+ quizIndex=Math.floor(Math.random()*list.length);quizScore=0;quizActive=true;quizAnswered=false;
+ document.getElementById("quizScoreLabel").textContent="Score: 0";renderQuiz()
+}
+function renderQuiz(){
+ const list=filteredQuiz();if(!list.length)return;const q=list[quizIndex%list.length];
+ document.getElementById("quizCategory").textContent=q.cat+" Quiz";
+ document.getElementById("quizQuestion").textContent=q.q;
+ document.getElementById("quizFeedback").textContent="";
+ document.getElementById("quizProgress").style.width="0%";quizAnswered=false;
+ const box=document.getElementById("quizOptions");box.innerHTML="";
+ q.o.forEach((opt,i)=>{const b=document.createElement("button");b.textContent=opt;b.addEventListener("click",()=>answerQuiz(i));box.appendChild(b)})
+}
+function answerQuiz(i){
+ if(!quizActive||quizAnswered)return;quizAnswered=true;const q=filteredQuiz()[quizIndex%filteredQuiz().length];
+ if(i===q.a){quizScore++;inc("score");document.getElementById("quizFeedback").textContent="✅ Correct! Excellent work!"}
+ else document.getElementById("quizFeedback").textContent="❌ Not quite. Keep learning!";
+ inc("quizQuestions");document.getElementById("quizScoreLabel").textContent="Score: "+quizScore;
+ document.getElementById("quizProgress").style.width="100%"
+}
+document.getElementById("startQuiz").addEventListener("click",startQuiz);
+document.getElementById("nextQuiz").addEventListener("click",()=>{
+ if(!quizActive){startQuiz();return}
+ const list=filteredQuiz();quizIndex=(quizIndex+1)%list.length;renderQuiz()
+});
+function dailyQuestion(){return quizBank[new Date().getDate()%quizBank.length]}
+document.getElementById("dailyBtn").addEventListener("click",()=>{quizCategory=dailyQuestion().cat;showSection("games");startQuiz()});
+document.getElementById("dailyChallengeText").textContent=dailyQuestion().q;
+
+/* =========================================================
+   STATS / ACHIEVEMENTS
+========================================================= */
+const achievements=[
+["First Question","Ask your first AI question",s=>s.questions>=1],
+["Curious Learner","Ask 10 questions",s=>s.questions>=10],
+["Knowledge Hunter","Ask 50 questions",s=>s.questions>=50],
+["Calculator Starter","Complete 10 calculations",s=>s.calculations>=10],
+["Quiz Beginner","Get your first correct quiz answer",s=>s.score>=1],
+["Quiz Master","Get 10 correct answers",s=>s.score>=10],
+["Dedicated Learner","Complete 25 quiz questions",s=>s.quizQuestions>=25]
+];
+function getAchievementCount(){return achievements.filter(a=>a[2](stats)).length}
+function renderStats(){
+ document.getElementById("statQuestions").textContent=stats.questions||0;
+ document.getElementById("statScore").textContent=stats.score||0;
+ document.getElementById("statCalculations").textContent=stats.calculations||0;
+ document.getElementById("statAI").textContent=stats.ai||0;
+ document.getElementById("statQuizQuestions").textContent=stats.quizQuestions||0;
+ document.getElementById("achievementCount").textContent=getAchievementCount()+" achievements";
+ const box=document.getElementById("achievements");box.innerHTML="";
+ achievements.forEach(a=>{const unlocked=a[2](stats),d=document.createElement("div");d.className="achievement "+(unlocked?"":"locked");d.innerHTML=`<strong>${unlocked?"🏆":"🔒"} ${a[0]}</strong><p class="muted">${a[1]}</p>`;box.appendChild(d)})
+}
+
+/* =========================================================
+   CONVERTER
+========================================================= */
+const unitData={
+length:{Meter:1,Kilometer:1000,Centimeter:.01,Millimeter:.001,Mile:1609.344,Foot:.3048,Inch:.0254},
+mass:{Kilogram:1,Gram:.001,Milligram:.000001,Pound:.45359237},
+time:{Second:1,Minute:60,Hour:3600,Day:86400},
+area:{'Square meter':1,'Square kilometer':1e6,'Square centimeter':.0001,'Square foot':.09290304},
+volume:{'Cubic meter':1,'Liter':.001,'Milliliter':.000001,'Cubic centimeter':.000001},
+speed:{'m/s':1,'km/h':1000/3600,'mph':1609.344/3600}
+};
+function populateCategories(){
+ const cat=document.getElementById("convertCategory");
+ cat.innerHTML=Object.keys(unitData).concat(["temperature"]).map(x=>`<option value="${x}">${x[0].toUpperCase()+x.slice(1)}</option>`).join("");
+ populateUnits()
+}
+function populateUnits(){
+ const c=document.getElementById("convertCategory").value,from=document.getElementById("convertFrom"),to=document.getElementById("convertTo");
+ const names=c==="temperature"?["Celsius","Fahrenheit","Kelvin"]:Object.keys(unitData[c]);
+ from.innerHTML=names.map(x=>`<option>${x}</option>`).join("");to.innerHTML=names.map(x=>`<option>${x}</option>`).join("");
+}
+function convertUnits(){
+ const value=Number(document.getElementById("convertValue").value),c=document.getElementById("convertCategory").value;
+ const from=document.getElementById("convertFrom").value,to=document.getElementById("convertTo").value;
+ if(!Number.isFinite(value)){document.getElementById("convertResult").textContent="Enter a valid number.";return}
+ let result;
+ if(c==="temperature"){
+  let C=from==="Celsius"?value:from==="Fahrenheit"?(value-32)*5/9:value-273.15;
+  result=to==="Celsius"?C:to==="Fahrenheit"?C*9/5+32:C+273.15
+ }else result=value*unitData[c][from]/unitData[c][to];
+ document.getElementById("convertResult").textContent=`${value} ${from} = ${fmt(result)} ${to}`
+}
+document.getElementById("convertCategory").addEventListener("change",populateUnits);
+document.getElementById("convertBtn").addEventListener("click",convertUnits);
+
+/* =========================================================
+   THEME / SETTINGS
+========================================================= */
+function setTheme(theme){
+ document.body.classList.toggle("dark",theme==="dark");
+ localStorage.setItem("zynovaTheme",theme);
+ cloudSync();
+ document.getElementById("themeBtn").textContent=theme==="dark"?"☀️":"🌙";
+}
+document.getElementById("themeBtn").addEventListener("click",()=>setTheme(document.body.classList.contains("dark")?"light":"dark"));
+document.getElementById("lightMode").addEventListener("click",()=>setTheme("light"));
+document.getElementById("darkMode").addEventListener("click",()=>setTheme("dark"));
+document.getElementById("compactNumbers").checked=compactNumbers;
+document.getElementById("compactNumbers").addEventListener("change",e=>{compactNumbers=e.target.checked;localStorage.setItem("zynovaCompact",compactNumbers)});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+ if(confirm("Reset ZYNOVA statistics, history and memory? This cannot be undone.")){
+  ["zynovaStats","zynovaHistory","zynovaMemory"].forEach(k=>localStorage.removeItem(k));
+  stats={...defaultStats};memory=0;renderHistory();renderStats();toast("ZYNOVA data reset")
+ }
+});
+
+/* =========================================================
+   BACKUP / RESTORE
+========================================================= */
+function backupData(){
+ const data={version:"ZYNOVA 2.0 Offline",date:new Date().toISOString(),stats,history:loadJSON("zynovaHistory",[]),memory,theme:localStorage.getItem("zynovaTheme")||"light",compactNumbers};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="zynova-backup.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast("Backup created")
+}
+document.getElementById("backupBtn").addEventListener("click",backupData);
+document.getElementById("restoreBtn").addEventListener("click",()=>document.getElementById("restoreFile").click());
+document.getElementById("restoreFile").addEventListener("change",e=>{
+ const file=e.target.files[0];if(!file)return;const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const d=JSON.parse(reader.result);
+   if(d.stats&&typeof d.stats==="object")stats={...defaultStats,...d.stats};
+   if(Array.isArray(d.history))localStorage.setItem("zynovaHistory",JSON.stringify(d.history));
+   if(typeof d.memory==="number"){memory=d.memory;localStorage.setItem("zynovaMemory",String(memory))}
+   if(d.theme)setTheme(d.theme);
+   if(typeof d.compactNumbers==="boolean"){compactNumbers=d.compactNumbers;localStorage.setItem("zynovaCompact",compactNumbers);document.getElementById("compactNumbers").checked=compactNumbers}
+   saveStats();renderHistory();toast("✅ Backup restored")
+  }catch{toast("❌ Invalid backup file")}
+  e.target.value=""
+ };
+ reader.readAsText(file)
+});
+
+/* =========================================================
+   SERVICE WORKER NOTE
+   A real service worker cannot reliably be registered from a
+   file:// page. When hosted, this page can be paired with a
+   separate sw.js. We intentionally do not create a fake blob
+   worker here because that caused install/cache failures.
+========================================================= */
+
+
+
+/* =========================================================
+   ACCOUNT / FIRST-LAUNCH / PREMIUM / PRO SYSTEM
+   Local development account layer. Real multi-device accounts,
+   payments and cloud sync require a backend and payment provider.
+========================================================= */
+const ZYNOVA_TRIAL_MS=24 * 60 * 60 * 1000;
+const ZYNOVA_INTERESTS=[
+  ["➗","Mathematics"],["⚛️","Physics"],["🧪","Chemistry"],["🧬","Biology"],
+  ["📖","English"],["🗣️","Kiswahili"],["🌍","Geography"],["🏛️","History & Government"],
+  ["💻","Computer Studies"],["🎵","Music"],["🌱","Agriculture"],["🍎","Nutrition"],
+  ["🙏","CRE / Religious Education"],["🤝","Social Studies"],["🧑‍🤝‍🧑","Community Service Learning"],["🎨","Creative Arts"]
+];
+let onboardingStep=0;
+let onboardingMode="create";
+let selectedInterests=[];
+
+const ZYNOVA_API=(location.protocol==="file:")?"http://localhost:3000/api":"/api";
+let cloudConnected=false;
+function getToken(){return localStorage.getItem("zynovaSessionToken")||""}
+function getAccount(){try{return JSON.parse(localStorage.getItem("zynovaAccount")||"null")}catch{return null}}
+function saveAccount(a,sync=true){localStorage.setItem("zynovaAccount",JSON.stringify(a));if(sync&&getToken())syncProfileToCloud(a)}
+async function apiRequest(path, options = {}) {
+  const response = await fetch(ZYNOVA_API + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    let message = `API request failed: ${response.status}`;
+
+    try {
+      const errorData = await response.json();
+      if (errorData?.error) {
+        message = errorData.error;
+      }
+    } catch (_) {}
+
+    throw new Error(message);
+  }
+
+  return await response.json();
+}
+
+/*
+  OFFLINE-SAFE CLOUD FALLBACK
+  The supplied file contained a partial restoreCloudData() body but was missing
+  its function declaration and server-sync implementation. These safe helpers
+  keep the local calculator and learning features from crashing. Cloud sync must
+  be connected to matching backend endpoints before these helpers are replaced.
+*/
+async function restoreCloudData(){
+  cloudConnected = false;
+  return false;
+}
+function syncProfileToCloud(_account){
+  cloudConnected = false;
+  return false;
+}
+function cloudSync(){
+  return false;
+}
+
+function trialActive(a){return !!a && a.plan==="trial" && (Date.now()-a.trialStart)<ZYNOVA_TRIAL_MS}
+function effectivePlan(a){
+  if(!a)return "free";
+  if(a.plan==="pro")return "pro";
+  if(a.plan==="premium")return "premium";
+  return trialActive(a)?"trial":"free";
+}
+function planLabel(plan){return plan==="pro"?"👑 Pro":plan==="premium"?"⭐ Premium":plan==="trial"?"🎁 Premium Trial":"Free"}
+function trialRemaining(a){return Math.max(0,ZYNOVA_TRIAL_MS-(Date.now()-(a?.trialStart||0)))}
+function formatRemaining(ms){
+  const total=Math.floor(ms/1000),h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=total%60;
+  return `${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`;
+}
+function updatePlanUI(){
+  const a=getAccount(),plan=effectivePlan(a),label=planLabel(plan);
+  const pill=document.getElementById("planPill"); if(pill)pill.textContent=label;
+  const home=document.getElementById("homePlanStatus"); if(home)home.textContent=label+(plan==="trial"?" • "+formatRemaining(trialRemaining(a))+" remaining":"");
+  const name=document.getElementById("accountDisplayName");if(name)name.textContent=a?.name||"Guest";
+  const topName=document.getElementById("topAccountName");if(topName)topName.textContent=a?.name||"Guest";
+  const email=document.getElementById("accountDisplayEmail");if(email)email.textContent=a?.email||"No account signed in.";
+  const planText=document.getElementById("accountPlanText");if(planText)planText.textContent=plan==="trial"?"You are currently enjoying the 24-hour Premium trial.":`Current plan: ${label}`;
+  const trialText=document.getElementById("accountTrialText");
+  if(trialText){trialText.innerHTML=plan==="trial"?`🎁 <strong>Premium trial active:</strong> <span class="trial-count">${formatRemaining(trialRemaining(a))}</span> remaining.`:plan==="free"?`Your Premium trial has ended. Upgrade to restore Premium features.`:`Your ${label} access is active.`}
+  const interests=document.getElementById("accountInterests");if(interests)interests.textContent=(a?.interests?.length?"Focus: "+a.interests.join(", "):"No learning interests selected yet.");
+  if(a && a.interests)selectedInterests=[...a.interests];
+  document.querySelectorAll("[data-premium-section]").forEach(el=>{
+    const locked=!(plan==="trial"||plan==="premium"||plan==="pro");el.classList.toggle("locked",locked);
+  });
+  if(typeof updateCalculatorToolsUI==="function") updateCalculatorToolsUI();
+  if(typeof updateCalculatorPlanPanel==="function") updateCalculatorPlanPanel();
+}
+function requirePremium(section){
+  const a=getAccount(),plan=effectivePlan(a);
+  if(["ai","quick","subjects","converter"].includes(section) && !(plan==="trial"||plan==="premium"||plan==="pro")){
+    openPlansModal();return false;
+  }
+  return true;
+}
+
+/* Replace navigation guard while preserving the original navigation behavior. */
+const _zynovaOriginalShowSection=showSection;
+showSection=function(id){if(!requirePremium(id))return;_zynovaOriginalShowSection(id);updatePlanUI()};
+
+function renderInterestChoices(containerId,initial=[]){
+  const box=document.getElementById(containerId);if(!box)return;box.innerHTML="";
+  ZYNOVA_INTERESTS.forEach(([icon,name])=>{
+    const b=document.createElement("button");b.type="button";b.className="interest-chip"+(initial.includes(name)?" selected":"");b.textContent=`${icon} ${name}`;
+    b.onclick=()=>{b.classList.toggle("selected");if(b.classList.contains("selected")){if(!selectedInterests.includes(name))selectedInterests.push(name)}else{selectedInterests=selectedInterests.filter(x=>x!==name)}};
+    box.appendChild(b);
+  });
+}
+function renderOnboard(){
+  const root=document.getElementById("onboardStep");if(!root)return;
+  if(onboardingStep===0){
+    root.innerHTML=`<div class="splash-step"><div class="splash-logo">🧮</div><div class="splash-title">ZYNOVA</div><p class="muted">Learn. Calculate. Discover.</p><div class="loading-bar"><span></span></div></div>`;
+    setTimeout(()=>{onboardingStep=1;renderOnboard()},1400);return;
+  }
+  if(onboardingStep===1){
+    root.innerHTML=`<div class="onboard-center"><div class="splash-logo">⚡</div><h1>Welcome to ZYNOVA! 🎉</h1><p>Your personal learning, calculation and study companion.</p><div class="onboard-features"><div class="onboard-feature">🧮 <b>Scientific Calculator</b><span class="muted">Powerful calculations.</span></div><div class="onboard-feature">🤖 <b>ZYNOVA AI</b><span class="muted">Educational tutoring.</span></div><div class="onboard-feature">📚 <b>16 Subjects</b><span class="muted">Explore your school topics.</span></div><div class="onboard-feature">⚡ <b>Quick Solve</b><span class="muted">Fast concept help.</span></div><div class="onboard-feature">🎮 <b>Educational Games</b><span class="muted">Learn by playing.</span></div><div class="onboard-feature">📊 <b>Statistics</b><span class="muted">Track your progress.</span></div></div><div class="onboard-actions"><button class="primary" onclick="nextOnboard()">🚀 Get Started</button></div></div>`;return;
+  }
+  if(onboardingStep===2){
+    root.innerHTML=`<div class="onboard-center"><h1>👤 ${onboardingMode==="create"?"Create your ZYNOVA account":"Sign in to ZYNOVA"}</h1><p>${onboardingMode==="create"?"Create a local development account to personalize your app and start your trial.":"Enter the account details you created on this device."}</p><div class="onboard-form"><label>Name<input id="onboardName" autocomplete="name" placeholder="Your name"></label><label>Email<input id="onboardEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label>Password<input id="onboardPassword" type="password" autocomplete="new-password" placeholder="At least 6 characters"></label><div id="onboardError" class="form-error"></div></div><div class="onboard-actions"><button class="primary" onclick="submitAccount()">${onboardingMode==="create"?"Create Account":"Sign In"}</button><button class="secondary" onclick="toggleOnboardMode()">${onboardingMode==="create"?"Already have an account? Sign In":"Create a new account"}</button></div><p class="form-note" style="margin-top:14px">Your account is connected to the ZYNOVA online server. Keep your login details private.</p></div>`;return;
+  }
+  if(onboardingStep===3){
+    const trialName = cleanUserName(getAdaptiveName() || getAccount()?.name || "");
+    root.innerHTML=`<div class="onboard-center"><h1>🎁 Welcome ${trialName ? trialName : "to ZYNOVA"}!</h1><div class="trial-box"><h2>24-hour Premium trial</h2><p>You have received 24 hours of Premium access.</p><ul><li>🤖 ZYNOVA AI</li><li>📚 All 16 Subjects</li><li>⚡ Quick Solve</li><li>📏 Unit Converter</li></ul><p style="margin-top:12px"><strong>Your trial starts now.</strong></p></div><div class="onboard-actions"><button class="primary" onclick="nextOnboard()">Continue →</button></div></div>`;return;
+  }
+  if(onboardingStep===4){
+    const a=getAccount();selectedInterests=[...(a?.interests||[])];
+    root.innerHTML=`<div class="onboard-center"><h1>🎯 What do you want to focus on?</h1><p>Choose any subjects you want ZYNOVA to highlight. This does <strong>not</strong> remove or disable any subject.</p><div id="onboardInterestGrid" class="interest-grid"></div><div class="onboard-actions"><button class="primary" onclick="finishOnboarding()">🏠 Finish & Open Home</button></div></div>`;
+    renderInterestChoices("onboardInterestGrid",selectedInterests);return;
+  }
+}
+function nextOnboard(){onboardingStep++;renderOnboard()}
+function toggleOnboardMode(){onboardingMode=onboardingMode==="create"?"signin":"create";renderOnboard()}
+async function hashPassword(text){
+  if(window.crypto?.subtle){const data=new TextEncoder().encode(text),buf=await crypto.subtle.digest("SHA-256",data);return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("")}
+  return btoa(unescape(encodeURIComponent(text)));
+}
+function changeZynovaName(){
+  const current=getZynovaUserName();
+  const next=prompt("Enter the name you want ZYNOVA to use:",current);
+  if(next===null) return;
+  const clean=String(next).trim().replace(/\s+/g," ");
+  if(!clean){ alert("Please enter a name."); return; }
+  setZynovaUserName(clean);
+  const account=getAccount();
+  if(account){ account.name=clean; saveAccount(account,false); }
+  personalizeZynovaUI();
+  updatePlanUI();
+  toast("Name updated to " + clean);
+}
+
+async function submitAccount(){
+  const name=(document.getElementById("onboardName")?.value||"").trim();
+  const email=(document.getElementById("onboardEmail")?.value||"").trim().toLowerCase();
+  const password=document.getElementById("onboardPassword")?.value||"";
+  const err=document.getElementById("onboardError");
+
+  if(!email||!password||(onboardingMode==="create"&&!name)){
+    err.textContent="Please complete all required fields.";
+    return;
+  }
+  if(password.length<6){
+    err.textContent="Password must be at least 6 characters.";
+    return;
+  }
+
+  if(onboardingMode==="create") {
+    setZynovaUserName(name);
+    const current = getAccount() || {};
+    saveAccount({...current,name,email},false);
+    personalizeZynovaUI();
+  }
+  err.textContent="Connecting to ZYNOVA cloud…";
+
+  try{
+    const data=await apiRequest(
+      onboardingMode==="create"?"/signup":"/login",
+      {method:"POST",body:JSON.stringify(onboardingMode==="create"?{name,email,password}:{email,password})}
+    );
+    localStorage.setItem("zynovaSessionToken",data.token);
+    saveAccount({...data.user,cloud:true},false);
+    setZynovaUserName(data.user.name);
+    personalizeZynovaUI();
+    cloudConnected=true;
+    selectedInterests=[...(data.user.interests||[])];
+
+    if(onboardingMode==="create"){
+      onboardingStep=3; renderOnboard(); updatePlanUI();
+    }else{
+      onboardingStep=4; renderOnboard(); updatePlanUI(); await restoreCloudData();
+    }
+  }catch(e){
+    if(onboardingMode==="create"){
+      const localAccount={
+        name,email,plan:"trial",trialStart:Date.now(),
+        interests:[],firstLaunchComplete:false,cloud:false
+      };
+      localStorage.setItem("zynovaLocalPasswordHash",await hashPassword(password));
+      saveAccount(localAccount,false);
+      setZynovaUserName(name);
+      personalizeZynovaUI();
+      cloudConnected=false;
+      selectedInterests=[];
+      onboardingStep=3; renderOnboard(); updatePlanUI();
+    }else{
+      const existing=getAccount();
+      if(existing && existing.email===email){
+        saveAccount({...existing,signedOut:false},false);
+        setZynovaUserName(existing.name||"");
+        personalizeZynovaUI();
+        onboardingStep=4; renderOnboard(); updatePlanUI();
+      }else{
+        err.textContent="Could not connect to the ZYNOVA server. If this is your first setup, choose Create Account.";
+      }
+    }
+  }
+}
+function finishOnboarding(){
+  const a=getAccount();if(!a)return;
+  a.interests=[...new Set(selectedInterests)];a.firstLaunchComplete=true;saveAccount(a);
+  localStorage.setItem("zynovaFirstLaunch","false");
+  syncProfileToCloud(a);cloudSync();document.getElementById("onboarding").classList.remove("show");updatePlanUI();showSection("home");toast("🎉 Welcome to ZYNOVA, "+a.name+"!");
+}
+function openPlansModal(){
+  const a=getAccount(), current=effectivePlan(a);
+  openModal("⭐ ZYNOVA Plans",`
+    <div class="notice">
+      <strong>Choose your ZYNOVA plan.</strong><br>
+      Your 24-hour Premium trial is available once during account setup.
+    </div>
+    <div class="plan-modal-grid">
+      <div class="plan-card">
+        <h3>🆓 Free</h3>
+        <div class="plan-price">Free</div>
+        <ul>
+          <li>Basic + scientific calculator</li>
+          <li>Educational Games</li>
+          <li>Basic Statistics</li>
+          <li>Achievements</li>
+        </ul>
+        <button class="secondary" onclick="closeModal()">Keep Free</button>
+      </div>
+
+      <div class="plan-card featured">
+        <h3>⭐ Premium</h3>
+        <div class="plan-price">Premium</div>
+        <ul>
+          <li>🤖 ZYNOVA AI</li>
+          <li>📚 All 16 Subjects</li>
+          <li>⚡ Quick Solve</li>
+          <li>📏 Unit Converter</li>
+          <li>➗ Fraction simplifier</li>
+          <li>📈 Percentage tools</li>
+          <li>🔢 Prime factorization</li>
+          <li>🔗 GCD / LCM</li>
+          <li>☁️ Cloud account features</li>
+        </ul>
+        <button class="primary" onclick="requestPlanUpgrade('premium')">
+          ⭐ Choose Premium
+        </button>
+      </div>
+
+      <div class="plan-card">
+        <h3>👑 Pro</h3>
+        <div class="plan-price">Pro</div>
+        <ul>
+          <li>Everything in Premium</li>
+          <li>🚀 Priority features</li>
+          <li>🧠 Advanced equation solver</li>
+          <li>📊 Statistics analyzer</li>
+          <li>🧮 2×2 matrix solver</li>
+          <li>☁️ Advanced cloud benefits</li>
+        </ul>
+        <button class="primary" onclick="requestPlanUpgrade('pro')">
+          👑 Choose Pro
+        </button>
+      </div>
+    </div>
+    <p class="form-note" style="margin-top:16px">
+      Plan activation is controlled by the ZYNOVA server when the online subscription
+      endpoints are available. This page does not pretend that a browser-only switch
+      is a secure payment system.
+    </p>
+  `);
+}
+
+async function requestPlanUpgrade(plan){
+  if(plan!=="premium" && plan!=="pro") return;
+
+  const token=getToken();
+  if(!token){
+    closeModal();
+    toast("🔐 Please sign in first.");
+    return;
+  }
+
+  try{
+    const data=await apiRequest("/subscription/checkout",{
+      method:"POST",
+      body:JSON.stringify({plan})
+    });
+
+    if(data?.checkoutUrl){
+      window.location.href=data.checkoutUrl;
+      return;
+    }
+
+    if(data?.plan){
+      const a=getAccount();
+      if(a){
+        a.plan=data.plan;
+        saveAccount(a,false);
+      }
+      updatePlanUI();
+      closeModal();
+      toast(`✅ ${plan==="pro"?"Pro":"Premium"} activated.`);
+      return;
+    }
+
+    closeModal();
+    toast("⭐ Subscription request sent.");
+  }catch(error){
+    closeModal();
+    toast("⚠️ Online subscription service is not available yet.");
+  }
+}
+
+async function refreshServerSubscription(){
+  if(!getToken()) return false;
+
+  try{
+    const data=await apiRequest("/subscription/status");
+    const a=getAccount();
+    if(!a) return false;
+
+    if(data?.plan){
+      // Server plan is authoritative when the endpoint responds.
+      a.plan=data.plan;
+      if(typeof data.trialStart==="number") a.trialStart=data.trialStart;
+      saveAccount(a,false);
+      updatePlanUI();
+    }
+
+    return true;
+  }catch(error){
+    return false;
+  }
+}
+
+async function activateDemoPlan(plan){
+  // Kept only as a development fallback. It is NOT a secure production
+  // subscription mechanism.
+  const a=getAccount();
+  if(!a){closeModal();return}
+
+  a.plan=plan;
+  saveAccount(a,false);
+  updatePlanUI();
+  closeModal();
+  toast(plan==="pro"?"👑 Development Pro activated":"⭐ Development Premium activated");
+}
+
+async function signOutZynova(){
+  try{if(getToken())await apiRequest("/logout",{method:"POST"})}catch(e){}
+  localStorage.removeItem("zynovaSessionToken");localStorage.removeItem("zynovaSignedOut");
+  const a=getAccount();if(a){a.signedOut=true;saveAccount(a,false)}
+  location.reload();
+}
+function openAccount(){showSection("account");renderInterestChoices("accountInterestGrid",selectedInterests)}
+function initAccountUI(){
+  refreshServerSubscription();
+  document.getElementById("plansBtn")?.addEventListener("click",openPlansModal);
+  document.getElementById("planPill")?.addEventListener("click",openPlansModal);
+  document.getElementById("signOutBtn")?.addEventListener("click",signOutZynova);
+  document.getElementById("saveInterestsBtn")?.addEventListener("click",()=>{const a=getAccount();if(!a)return; a.interests=[...new Set(selectedInterests)];saveAccount(a);updatePlanUI();toast("🎯 Interests saved")});
+  renderInterestChoices("accountInterestGrid",selectedInterests);updatePlanUI();
+}
+function shouldShowOnboarding(){
+  const a=getAccount();
+  /* After the first successful setup, do NOT show the login/onboarding screen again.
+     A valid session token will continue cloud sync; if it is temporarily missing or
+     expired, ZYNOVA still opens normally using the local copy of the account/data. */
+  return !a || !a.firstLaunchComplete || localStorage.getItem("zynovaFirstLaunch")!=="false";
+}
+
+/* Keep trial countdown fresh while the app is open. */
+setInterval(()=>{updatePlanUI()},1000);
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+document.querySelectorAll("#mainNav button[data-section=\"ai\"],#mainNav button[data-section=\"quick\"],#mainNav button[data-section=\"subjects\"],#mainNav button[data-section=\"converter\"]").forEach(b=>b.dataset.premiumSection="true");
+async function init(){
+  const savedAccount=getAccount(); if(savedAccount?.name) setZynovaUserName(savedAccount.name); personalizeZynovaUI();
+ setTheme(localStorage.getItem("zynovaTheme")==="dark"?"dark":"light");
+ buildSubjects();buildConcepts();buildGameTabs();renderHistory();renderStats();populateCategories();
+ initAccountUI();
+ updatePlanUI();
+ if(getToken())await restoreCloudData();
+ if(shouldShowOnboarding()){document.getElementById("onboarding").classList.add("show");onboardingStep=0;renderOnboard();}else{document.getElementById("onboarding").classList.remove("show");showSection("home");}
+}
+init();
+</script>
+
+<script>
+/* =========================================================
+   ZYNOVA ADAPTIVE NAME — FINAL
+========================================================= */
+
+function cleanUserName(name){
+    return String(name || "").replace(/\s+/g," ").trim().slice(0,60);
+}
+
+function getAdaptiveName(){
+    const keys = [
+        "zynovaUserName",
+        "zynova_user_name",
+        "zynovaName",
+        "userName"
+    ];
+
+    for(const key of keys){
+        const value = cleanUserName(localStorage.getItem(key));
+        if(value) return value;
+    }
+
+    const objects = [
+        "zynovaAccount",
+        "zynovaUser",
+        "zynovaProfile",
+        "user",
+        "account"
+    ];
+
+    for(const key of objects){
+        try{
+            const obj = JSON.parse(localStorage.getItem(key) || "null");
+            if(obj && typeof obj === "object"){
+                const value = cleanUserName(obj.name || obj.fullName || obj.username);
+                if(value) return value;
+            }
+        }catch(e){}
+    }
+
+    return "";
+}
+
+function saveAdaptiveName(name){
+    const clean = cleanUserName(name);
+    if(!clean) return false;
+
+    localStorage.setItem("zynovaUserName",clean);
+    localStorage.setItem("zynova_user_name",clean);
+    localStorage.setItem("zynovaName",clean);
+    localStorage.setItem("userName",clean);
+
+    ["zynovaAccount","zynovaUser","zynovaProfile","user","account"].forEach(key=>{
+        try{
+            const obj=JSON.parse(localStorage.getItem(key)||"null");
+            if(obj && typeof obj==="object"){
+                obj.name=clean;
+                localStorage.setItem(key,JSON.stringify(obj));
+            }
+        }catch(e){}
+    });
+
+    updateAdaptiveNameUI();
+    return true;
+}
+
+function updateAdaptiveNameUI(){
+    const name=getAdaptiveName();
+    if(!name) return;
+
+    document.querySelectorAll("[data-zynova-name]").forEach(el=>{
+        el.textContent=name;
+    });
+
+    document.querySelectorAll("[data-zynova-welcome]").forEach(el=>{
+        el.textContent=`Welcome ${name}! 👋`;
+    });
+
+    document.querySelectorAll("[data-zynova-welcome-title]").forEach(el=>{
+        el.textContent=`Welcome ${name}! ⚡`;
+    });
+
+    const ids=["welcomeName","userNameDisplay","accountName","profileName"];
+
+    ids.forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.textContent=name;
+    });
+
+    const title=document.getElementById("welcomeTitle");
+    if(title) title.textContent=`Welcome ${name}! ⚡`;
+}
+
+function changeZynovaName(){
+    const current=getAdaptiveName();
+    const entered=prompt(
+        current
+        ? `Enter the name ZYNOVA should use.\nCurrent: ${current}`
+        : "Enter your name for ZYNOVA:"
+    );
+
+    if(entered===null) return;
+
+    const name=cleanUserName(entered);
+
+    if(!name){
+        alert("Please enter a valid name.");
+        return;
+    }
+
+    saveAdaptiveName(name);
+}
+
+document.addEventListener("DOMContentLoaded",updateAdaptiveNameUI);
+</script>
+
+
+<script>
+/* FINAL TRIAL WELCOME NAME FIX */
+function updateTrialWelcomeName(){
+    const name = typeof getAdaptiveName === "function" ? getAdaptiveName() : "";
+    if(!name) return;
+    document.querySelectorAll(".onboard-center h1").forEach(h=>{
+        if(h.textContent.includes("Welcome Gift!")){
+            h.textContent = `🎁 Welcome ${name}!`;
+        }
+    });
+}
+document.addEventListener("DOMContentLoaded", updateTrialWelcomeName);
+document.addEventListener("DOMContentLoaded",()=>{
+  if(typeof updateCalculatorToolsUI==="function") updateCalculatorToolsUI();
+});
+</script>
+
+
+<script>
+function updateCalculatorPlanPanel(){
+  const el=document.getElementById("zynovaCalcPlanStatus");
+  if(!el) return;
+
+  const a=(typeof getAccount==="function") ? getAccount() : null;
+  const plan=(typeof effectivePlan==="function") ? effectivePlan(a) : "free";
+
+  if(plan==="pro"){
+    el.innerHTML="👑 <strong>Pro Active</strong> — Advanced ZYNOVA access enabled.";
+  }else if(plan==="premium"){
+    let remaining="";
+    try{
+      const start=a && Number(a.trialStart);
+      if(start){
+        const left=Math.max(0,(24*60*60*1000)-(Date.now()-start));
+        if(left>0){
+          const hours=Math.floor(left/3600000);
+          const mins=Math.floor((left%3600000)/60000);
+          remaining=` — Trial: ${hours}h ${mins}m remaining`;
+        }
+      }
+    }catch(e){}
+    el.innerHTML="⭐ <strong>Premium</strong>"+remaining+" — Premium access enabled.";
+  }else{
+    el.innerHTML="🆓 <strong>Free plan</strong> — Choose Premium or Pro to unlock their features.";
+  }
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  updateCalculatorPlanPanel();
+  if(typeof updateCalculatorToolsUI==="function") updateCalculatorToolsUI();
+  setInterval(()=>{updateCalculatorPlanPanel();if(typeof updateCalculatorToolsUI==="function")updateCalculatorToolsUI()},1000);
+});
+</script>
+
+</body>
+</html>
